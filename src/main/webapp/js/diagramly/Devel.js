@@ -140,3 +140,7 @@ if (urlParams['tableLayout'] == '1')
 {
   mxscript(drawDevUrl + 'js/diagramly/mxTableLayout.js');
 }
+
+
+// custom plugins
+mxscript(drawDevUrl +'js/diagramly/custom/BlockSchema.js');

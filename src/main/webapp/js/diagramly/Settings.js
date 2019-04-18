@@ -11,9 +11,9 @@ var mxSettings =
 	 * Defines current version of settings.
 	 */
 	currentVersion: 17,
-	
+
 	defaultFormatWidth: (screen.width < 600) ? '0' : '240',
-	
+
 	// NOTE: Hardcoded in index.html due to timing of JS loading
 	key: '.drawio-config',
 
@@ -85,7 +85,7 @@ var mxSettings =
 	{
 		// Makes sure to update the latest data from the localStorage
 		mxSettings.load();
-		
+
 		if (mxUtils.indexOf(mxSettings.settings.customLibraries, id) < 0)
 		{
 			// Makes sure scratchpad is below search in sidebar
@@ -98,7 +98,7 @@ var mxSettings =
 				mxSettings.settings.customLibraries.push(id);
 			}
 		}
-		
+
 		mxSettings.save();
 	},
 	removeCustomLibrary: function(id)
@@ -154,7 +154,7 @@ var mxSettings =
 	},
 	init: function()
 	{
-		mxSettings.settings = 
+		mxSettings.settings =
 		{
 			language: '',
 			configVersion: Editor.configVersion,
@@ -209,7 +209,7 @@ var mxSettings =
 		if (value != null)
 		{
 			var temp = JSON.parse(value);
-			
+
 			if ((Editor.config != null && Editor.config.override) ||
 				temp.configVersion != Editor.configVersion)
 			{
@@ -218,72 +218,72 @@ var mxSettings =
 			else
 			{
 				mxSettings.settings = temp;
-	
+
 				if (mxSettings.settings.plugins == null)
 				{
 					mxSettings.settings.plugins = [];
 				}
-				
+
 				if (mxSettings.settings.recentColors == null)
 				{
 					mxSettings.settings.recentColors = [];
 				}
-				
+
 				if (mxSettings.settings.libraries == null)
 				{
 					mxSettings.settings.libraries = Sidebar.prototype.defaultEntries;
 				}
-				
+
 				if (mxSettings.settings.customLibraries == null)
 				{
 					mxSettings.settings.customLibraries = Editor.defaultCustomLibraries;
 				}
-				
+
 				if (mxSettings.settings.ui == null)
 				{
 					mxSettings.settings.ui = '';
 				}
-				
+
 				if (mxSettings.settings.formatWidth == null)
 				{
 					mxSettings.settings.formatWidth = mxSettings.defaultFormatWidth;
 				}
-				
+
 				if (mxSettings.settings.lastAlert != null)
 				{
 					delete mxSettings.settings.lastAlert;
 				}
-				
+
 				if (mxSettings.settings.createTarget == null)
 				{
 					mxSettings.settings.createTarget = false;
 				}
-				
+
 				if (mxSettings.settings.pageFormat == null)
 				{
 					mxSettings.settings.pageFormat = mxGraph.prototype.pageFormat;
 				}
-				
+
 				if (mxSettings.settings.search == null)
 				{
 					mxSettings.settings.search = true;
 				}
-				
+
 				if (mxSettings.settings.showStartScreen == null)
 				{
 					mxSettings.settings.showStartScreen = true;
-				}		
-				
+				}
+
 				if (mxSettings.settings.gridColor == null)
 				{
 					mxSettings.settings.gridColor = mxGraphView.prototype.gridColor;
 				}
-				
+
 				if (mxSettings.settings.autosave == null)
 				{
 					mxSettings.settings.autosave = true;
 				}
-				
+
 				if (mxSettings.settings.scratchpadSeen != null)
 				{
 					delete mxSettings.settings.scratchpadSeen;
@@ -291,7 +291,7 @@ var mxSettings =
 			}
 		}
 	},
-	clear: function() 
+	clear: function()
 	{
 		if (isLocalStorage)
 		{
@@ -302,7 +302,7 @@ var mxSettings =
 
 /**
  * Variable: mxLoadSettings
- * 
+ *
  * Optional global config variable to toggle loading the settings. Default is true.
  *
  * (code)

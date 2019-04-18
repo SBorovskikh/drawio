@@ -635,7 +635,7 @@ sendMessage=Send
 sendYourFeedbackToDrawIo=Send your feedback to draw.io
 serviceUnavailableOrBlocked=Service unavailable or blocked
 sessionExpired=Your session has expired. Please refresh the browser window.
-sessionTimeoutOnSave=Your session has timed out and you have been disconnected from the Google Drive. Press OK to login and save. 
+sessionTimeoutOnSave=Your session has timed out and you have been disconnected from the Google Drive. Press OK to login and save.
 setAsDefaultStyle=Set as Default Style
 shadow=Shadow
 shape=Shape
@@ -817,3 +817,6 @@ timeAgo={1} ago
 confluenceCloud=Confluence Cloud
 libraries=Libraries
 confAnchor=Confluence Page Anchor
+
+blockschema=BlockSchema
+bs_loadschema=Load Schema

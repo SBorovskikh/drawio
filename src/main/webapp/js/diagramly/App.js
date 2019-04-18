@@ -15,14 +15,14 @@ App = function(editor, container, lightbox)
 	EditorUi.call(this, editor, container, (lightbox != null) ? lightbox :
 		(urlParams['lightbox'] == '1' || (uiTheme == 'min' &&
 		urlParams['chrome'] != '0')));
-	
+
 	// Logs unloading of window with modifications for Google Drive file
 	if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp)
 	{
 		window.onunload = mxUtils.bind(this, function()
 		{
 			var file = this.getCurrentFile();
-			
+
 			if (file != null && file.constructor == DriveFile && file.isModified() && this.drive != null)
 			{
 				EditorUi.logEvent({category: 'DISCARD-SAVE-FILE-' + file.getHash() + '.' +
@@ -39,7 +39,7 @@ App = function(editor, container, lightbox)
 			}
 		});
 	}
-	
+
 	// Pre-fetches images
 	if (mxClient.IS_SVG)
 	{
@@ -50,12 +50,12 @@ App = function(editor, container, lightbox)
 		var img = new Image();
 		img.src = mxGraph.prototype.warningImage.src;
 	}
-	
+
 	// Global helper method to deal with popup blockers
 	window.openWindow = mxUtils.bind(this, function(url, pre, fallback)
 	{
 		var wnd = null;
-		
+
 		try
 		{
 			wnd = window.open(url);
@@ -64,7 +64,7 @@ App = function(editor, container, lightbox)
 		{
 			// ignore
 		}
-		
+
 		if (wnd == null || wnd === undefined)
 		{
 			this.showDialog(new PopupDialog(this, url, pre, fallback).container, 320, 140, true, true);
@@ -87,7 +87,7 @@ App = function(editor, container, lightbox)
 		{
 			window.openFile.cancel(true);
 		}
-		
+
 		this.handleError(message);
 	});
 
@@ -96,7 +96,7 @@ App = function(editor, container, lightbox)
 	{
 		this.addFileDropHandler([document]);
 	}
-	
+
 	// Process the queue for waiting plugins
 	if (App.DrawPlugins != null)
 	{
@@ -119,7 +119,7 @@ App = function(editor, container, lightbox)
 				this.initializeEmbedMode();
 			}
 		}
-		
+
 		// Installs global callback for plugins
 		window.Draw.loadPlugin = mxUtils.bind(this, function(callback)
 		{
@@ -133,7 +133,7 @@ App = function(editor, container, lightbox)
 				this.initializeEmbedMode();
 			}
 		});
-		
+
 		//Set a timeout in case a plugin doesn't load quickly or doesn't load at all
 		setTimeout(mxUtils.bind(this, function()
 		{
@@ -254,7 +254,7 @@ App.PUSHER_URL = 'https://js.pusher.com/4.3/pusher.min.js';
  * Google APIs to load. The realtime API is needed to notify collaborators of conversion
  * of the realtime files, but after Dec 11 it's read-only and hence no longer needed.
  */
-App.GOOGLE_APIS = 'client,drive-share'; 
+App.GOOGLE_APIS = 'client,drive-share';
 
 /**
  * Defines plugin IDs for loading via p URL parameter. Update the table at
@@ -278,34 +278,34 @@ App.pluginRegistry = {'4xAKTrabTpTzahoLthkwPNUn': '/plugins/explore.js',
 
 /**
  * Function: authorize
- * 
+ *
  * Authorizes the client, gets the userId and calls <open>.
  */
 App.getStoredMode = function()
 {
 	var mode = null;
-	
+
 	if (mode == null && isLocalStorage)
 	{
 		mode = localStorage.getItem('.mode');
 	}
-	
+
 	if (mode == null && typeof(Storage) != 'undefined')
 	{
 		var cookies = document.cookie.split(";");
-		
+
 		for (var i = 0; i < cookies.length; i++)
 		{
 			// Removes spaces around cookie
 			var cookie = mxUtils.trim(cookies[i]);
-			
+
 			if (cookie.substring(0, 5) == 'MODE=')
 			{
 				mode = cookie.substring(5);
 				break;
 			}
 		}
-		
+
 		if (mode != null && isLocalStorage)
 		{
 			// Moves to local storage
@@ -315,7 +315,7 @@ App.getStoredMode = function()
 			localStorage.setItem('.mode', mode);
 		}
 	}
-	
+
 	return mode;
 };
 
@@ -333,9 +333,9 @@ App.getStoredMode = function()
 			{
 				urlParams['mode'] = 'dropbox';
 			}
-			
+
 			App.mode = urlParams['mode'];
-			
+
 			if (App.mode == null)
 			{
 				// Stored mode overrides preferred mode
@@ -377,7 +377,7 @@ App.getStoredMode = function()
 						window.DriveClient = null;
 					}
 				}
-	
+
 				// Loads dropbox for all browsers but IE8 and below (no CORS) if not disabled or if enabled and in embed mode
 				// KNOWN: Picker does not work in IE11 (https://dropbox.zendesk.com/requests/1650781)
 				if (typeof window.DropboxClient === 'function')
@@ -390,7 +390,7 @@ App.getStoredMode = function()
 							window.location.hash.substring(0, 2) == '#D'))
 						{
 							mxscript(App.DROPBOX_URL);
-							
+
 							// Must load this after the dropbox SDK since they use the same namespace
 							mxscript(App.DROPINS_URL, null, 'dropboxjs', App.DROPBOX_APPKEY);
 						}
@@ -405,7 +405,7 @@ App.getStoredMode = function()
 						window.DropboxClient = null;
 					}
 				}
-				
+
 				// Loads OneDrive for all browsers but IE6/IOS if not disabled or if enabled and in embed mode
 				if (typeof window.OneDriveClient === 'function')
 				{
@@ -428,7 +428,7 @@ App.getStoredMode = function()
 						window.OneDriveClient = null;
 					}
 				}
-				
+
 				// Loads Trello for all browsers but < IE10 if not disabled or if enabled and in embed mode
 				if (typeof window.TrelloClient === 'function')
 				{
@@ -454,7 +454,7 @@ App.getStoredMode = function()
 					}
 				}
 			}
-			
+
 			// Loads JSON for older browsers
 			if (typeof(JSON) == 'undefined')
 			{
@@ -466,7 +466,7 @@ App.getStoredMode = function()
 
 /**
  * Program flow starts here.
- * 
+ *
  * Optional callback is called with the app instance.
  */
 App.main = function(callback, createUi)
@@ -476,25 +476,25 @@ App.main = function(callback, createUi)
 	{
 		EditorUi.logError(message, url, linenumber, colno, err);
 	};
-	
+
 	// Removes info text in embed mode
 	if (urlParams['embed'] == '1' || urlParams['lightbox'] == '1')
 	{
 		var geInfo = document.getElementById('geInfo');
-		
+
 		if (geInfo != null)
 		{
 			geInfo.parentNode.removeChild(geInfo);
 		}
 	}
-	
+
 	// Redirects to the latest AWS icons
 	if (document.referrer != null && urlParams['libs'] == 'aws3' &&
 		document.referrer.substring(0, 42) == 'https://aws.amazon.com/architecture/icons/')
 	{
 		urlParams['libs'] = 'aws4';
 	}
-	
+
 	if (window.mxscript != null)
 	{
 		// Injects offline dependencies
@@ -503,14 +503,14 @@ App.main = function(callback, createUi)
 			mxscript('js/shapes.min.js');
 			mxscript('js/stencils.min.js');
 			mxscript('js/extensions.min.js');
-			
+
 			var frame = document.createElement('iframe');
 			frame.setAttribute('width', '0');
 			frame.setAttribute('height', '0');
 			frame.setAttribute('src', 'offline.html');
 			document.body.appendChild(frame);
 		}
-		
+
 		// Loads Pusher API
 		if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp && DrawioFile.SYNC == 'auto' &&
 			urlParams['stealth'] != '1' && urlParams['offline'] != '1')
@@ -518,13 +518,19 @@ App.main = function(callback, createUi)
 			// TODO: Check if async loading is fast enough
 			mxscript(App.PUSHER_URL);
 		}
-		
+
 		// Loads plugins
 		if (urlParams['plugins'] != '0' && urlParams['offline'] != '1')
 		{
 			// mxSettings is not yet initialized in configure mode, redirect parameter
 			// to p URL parameter in caller for plugins in embed mode
 			var plugins = (mxSettings.settings != null) ? mxSettings.getPlugins() : null;
+
+			/***** custom ****/
+			// add blockSchema
+			//plugins.push("bs");
+			/****************/
+
 			var temp = urlParams['p'];
 			App.initPluginCallback();
 
@@ -533,15 +539,15 @@ App.main = function(callback, createUi)
 				// Mapping from key to URL in App.plugins
 				App.loadPlugins(temp.split(';'));
 			}
-			
+
 			if (plugins != null && plugins.length > 0 && urlParams['plugins'] != '0')
 			{
-				// Loading plugins inside the asynchronous block below stops the page from loading so a 
+				// Loading plugins inside the asynchronous block below stops the page from loading so a
 				// hardcoded message for the warning dialog is used since the resources are loadd below
 				var warning = 'The page has requested to load the following plugin(s):\n \n {1}\n \n Would you like to load these plugin(s) now?\n \n NOTE : Only allow plugins to run if you fully understand the security implications of doing so.\n';
 				var tmp = window.location.protocol + '//' + window.location.host;
 				var local = true;
-				
+
 				for (var i = 0; i < plugins.length && local; i++)
 				{
 					if (plugins[i].charAt(0) != '/' && plugins[i].substring(0, tmp.length) != tmp)
@@ -549,7 +555,7 @@ App.main = function(callback, createUi)
 						local = false;
 					}
 				}
-				
+
 				if (local || mxUtils.confirm(mxResources.replacePlaceholders(warning, [plugins.join('\n')]).replace(/\\n/g, '\n')))
 				{
 					for (var i = 0; i < plugins.length; i++)
@@ -571,7 +577,7 @@ App.main = function(callback, createUi)
 				}
 			}
 		}
-		
+
 		// Loads gapi for all browsers but IE8 and below if not disabled or if enabled and in embed mode
 		// Special case: Cannot load in asynchronous code below
 		if (typeof window.DriveClient === 'function' &&
@@ -587,7 +593,7 @@ App.main = function(callback, createUi)
 			window.DriveClient = null;
 		}
 	}
-	
+
 	/**
 	 * Asynchronous MathJax extension.
 	 */
@@ -606,19 +612,19 @@ App.main = function(callback, createUi)
 		{
 			// Adds bundle text to resources
 			mxResources.parse(xhr[0].getText());
-			
+
 			// Prepares themes with mapping from old default-style to old XML file
 			if (xhr.length > 2)
 			{
 				Graph.prototype.defaultThemes['default-style2'] = xhr[1].getDocumentElement();
 	 			Graph.prototype.defaultThemes['darkTheme'] = xhr[2].getDocumentElement();
 			}
-			
+
 			// Main
 			var ui = (createUi != null) ? createUi() : new App(new Editor(
 					urlParams['chrome'] == '0' || uiTheme == 'min',
 					null, null, null, urlParams['chrome'] != '0'));
-			
+
 			if (window.mxscript != null)
 			{
 				// Loads dropbox for all browsers but IE8 and below (no CORS) if not disabled or if enabled and in embed mode
@@ -643,7 +649,7 @@ App.main = function(callback, createUi)
 				{
 					window.DropboxClient = null;
 				}
-					
+
 				// Loads OneDrive for all browsers but IE6/IOS if not disabled or if enabled and in embed mode
 				if (typeof window.OneDriveClient === 'function' &&
 					(typeof OneDrive === 'undefined' && window.DrawOneDriveClientCallback != null &&
@@ -657,7 +663,7 @@ App.main = function(callback, createUi)
 				{
 					window.OneDriveClient = null;
 				}
-				
+
 				// Loads Trello for all browsers but < IE10 if not disabled or if enabled and in embed mode
 				if (typeof window.TrelloClient === 'function' &&
 					(typeof window.Trello === 'undefined' && window.DrawTrelloClientCallback != null &&
@@ -678,21 +684,21 @@ App.main = function(callback, createUi)
 				{
 					window.TrelloClient = null;
 				}
-	
+
 			}
-			
+
 			if (callback != null)
 			{
 				callback(ui);
 			}
-			
+
 			/**
 			 * For developers only
 			 */
 			if (urlParams['chrome'] != '0' && urlParams['test'] == '1')
 			{
 				EditorUi.debug('Started in ' + (new Date().getTime() - t0.getTime()) + 'ms');
-				
+
 				if (urlParams['export'] != null)
 				{
 					EditorUi.debug('Export:', EXPORT_URL);
@@ -701,11 +707,11 @@ App.main = function(callback, createUi)
 		}, function(xhr)
 		{
 			var st = document.getElementById('geStatus');
-			
+
 			if (st != null)
 			{
 				st.innerHTML = 'Error loading page. <a>Please try refreshing.</a>';
-				
+
 				// Tries reload with default resources in case any language resources were not available
 				st.getElementsByTagName('a')[0].onclick = function()
 				{
@@ -725,7 +731,7 @@ App.main = function(callback, createUi)
 		doLoad(mxResources.getDefaultBundle(RESOURCE_BASE, mxLanguage) ||
 			mxResources.getSpecialBundle(RESOURCE_BASE, mxLanguage));
 	};
-	
+
 	// Optional override for autosaveDelay and defaultEdgeLength
 	try
 	{
@@ -734,7 +740,7 @@ App.main = function(callback, createUi)
 			if (mxSettings.settings.autosaveDelay != null)
 			{
 				var val = parseInt(mxSettings.settings.autosaveDelay);
-				
+
 				if (!isNaN(val) && val > 0)
 				{
 					DrawioFile.prototype.autosaveDelay = val;
@@ -752,15 +758,15 @@ App.main = function(callback, createUi)
 					}
 				}
 			}
-			
+
 			if (mxSettings.settings.defaultEdgeLength != null)
 			{
 				var val = parseInt(mxSettings.settings.defaultEdgeLength);
-				
+
 				if (!isNaN(val) && val > 0)
 				{
 					Graph.prototype.defaultEdgeLength = val;
-		
+
 					if (window.console != null)
 					{
 						console.log('Setting defaultEdgeLength to ' + Graph.prototype.defaultEdgeLength);
@@ -783,12 +789,12 @@ App.main = function(callback, createUi)
 			console.error(e);
 		}
 	}
-	
+
 	// Sends load event if configuration is requested and waits for configure action
 	if (urlParams['configure'] == '1')
 	{
 		var op = window.opener || window.parent;
-		
+
 		var configHandler = function(evt)
 		{
 			if (evt.source == op)
@@ -796,10 +802,10 @@ App.main = function(callback, createUi)
 				try
 				{
 					var data = JSON.parse(evt.data);
-					
+
 					if (data != null && data.action == 'configure')
 					{
-						mxEvent.removeListener(window, 'message', configHandler);					
+						mxEvent.removeListener(window, 'message', configHandler);
 						Editor.configure(data.config, true);
 						mxSettings.load();
 						doMain();
@@ -814,7 +820,7 @@ App.main = function(callback, createUi)
 				}
 			}
 		};
-		
+
 		// Receives XML message from opener and puts it into the graph
 		mxEvent.addListener(window, 'message', configHandler);
 		op.postMessage(JSON.stringify({event: 'configure'}), '*');
@@ -834,7 +840,7 @@ mxUtils.extend(App, EditorUi);
 App.prototype.defaultUserPicture = 'https://lh3.googleusercontent.com/-HIzvXUy6QUY/AAAAAAAAAAI/AAAAAAAAAAA/giuR7PQyjEk/photo.jpg?sz=30';
 
 /**
- * 
+ *
  */
 App.prototype.shareImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2RpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowOTgwMTE3NDA3MjA2ODExODhDNkFGMDBEQkQ0RTgwOSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoxMjU2NzdEMTcwRDIxMUUxQjc0MDkxRDhCNUQzOEFGRCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoxMjU2NzdEMDcwRDIxMUUxQjc0MDkxRDhCNUQzOEFGRCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IFdpbmRvd3MiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDowNjgwMTE3NDA3MjA2ODExODcxRkM4MUY1OTFDMjQ5OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDowNzgwMTE3NDA3MjA2ODExODhDNkFGMDBEQkQ0RTgwOSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PrM/fs0AAADgSURBVHjaYmDAA/7//88MwgzkAKDGFiD+BsQ/QWxSNaf9RwN37twpI8WAS+gGfP78+RpQSoRYA36iG/D379+vQClNdLVMOMz4gi7w79+/n0CKg1gD9qELvH379hzIHGK9oA508ieY8//8+fO5rq4uFCilRKwL1JmYmNhhHEZGRiZ+fn6Q2meEbDYG4u3/cYCfP38uA7kOm0ZOIJ7zn0jw48ePPiDFhmzArv8kgi9fvuwB+w5qwH9ykjswbFSZyM4sEMDPBDTlL5BxkFSd7969OwZ2BZKYGhDzkmjOJ4AAAwBhpRqGnEFb8QAAAABJRU5ErkJggg==';
 
@@ -884,7 +890,7 @@ App.initPluginCallback = function()
 	{
 		// Workaround for need to load plugins now but wait for UI instance
 		App.DrawPlugins = [];
-		
+
 		// Global entry point for plugins is Draw.loadPlugin. This is the only
 		// long-term supported solution for access to the EditorUi instance.
 		window.Draw = new Object();
@@ -896,7 +902,7 @@ App.initPluginCallback = function()
 };
 
 /**
- * 
+ *
  */
 App.pluginsLoaded = {};
 App.embedModePluginsCount = 0;
@@ -913,14 +919,14 @@ App.loadPlugins = function(plugins, useInclude)
 			try
 			{
 				var url = App.pluginRegistry[plugins[i]];
-				
+
 				if (url != null)
 				{
 					if (App.pluginsLoaded[url] == null)
 					{
 						App.pluginsLoaded[url] = true;
 						App.embedModePluginsCount++;
-						
+
 						if (typeof window.drawDevUrl === 'undefined')
 						{
 							if (useInclude)
@@ -976,14 +982,14 @@ App.prototype.initializeEmbedMode = function()
 		{
 			this.initEmbedDone = true;
 		}
-		
+
 		EditorUi.prototype.initializeEmbedMode.apply(this, arguments);
 	}
 };
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -998,7 +1004,7 @@ App.prototype.init = function()
 
 	/**
 	 * Holds the listener for description changes.
-	 */	
+	 */
 	this.descriptorChangedListener = mxUtils.bind(this, this.descriptorChanged);
 
 	/**
@@ -1008,7 +1014,7 @@ App.prototype.init = function()
 			mxClient.IS_IE11 || mxClient.IS_EDGE) &&
 			(urlParams['gh'] != '0' && (urlParams['embed'] != '1' ||
 			urlParams['gh'] == '1')) ? new GitHubClient(this) : null;
-	
+
 	if (this.gitHub != null)
 	{
 		this.gitHub.addListener('userChanged', mxUtils.bind(this, function()
@@ -1034,13 +1040,13 @@ App.prototype.init = function()
 				 * Holds the x-coordinate of the point.
 				 */
 				this.oneDrive = new OneDriveClient(this);
-				
+
 				this.oneDrive.addListener('userChanged', mxUtils.bind(this, function()
 				{
 					this.updateUserElement();
 					this.restoreLibraries();
 				}));
-				
+
 				// Notifies listeners of new client
 				this.fireEvent(new mxEventObject('clientLoaded', 'client', this.oneDrive));
 			}
@@ -1066,14 +1072,14 @@ App.prototype.init = function()
 			if (typeof window.Trello !== 'undefined')
 			{
 				this.trello = new TrelloClient(this);
-				
+
 				//TODO we have no user info from Trello so we don't set a user
 				this.trello.addListener('userChanged', mxUtils.bind(this, function()
 				{
 					this.updateUserElement();
 					this.restoreLibraries();
 				}));
-				
+
 				// Notifies listeners of new client
 				this.fireEvent(new mxEventObject('clientLoaded', 'client', this.trello));
 			}
@@ -1104,7 +1110,7 @@ App.prototype.init = function()
 					 * Holds the x-coordinate of the point.
 					 */
 					this.drive = new DriveClient(this);
-					
+
 					/**
 					 * Adds important notice for new app if drive file is loaded in old app.
 					 */
@@ -1113,11 +1119,11 @@ App.prototype.init = function()
 						this.editor.addListener('fileLoaded', mxUtils.bind(this, function()
 						{
 							var file = this.getCurrentFile();
-							
+
 							if (file != null && file.constructor == DriveFile)
 							{
 								var td = document.getElementById('geFooterItem2');
-								
+
 								if (td != null)
 								{
 									td.innerHTML = '<a href="https://support.draw.io/display/DO/2014/11/27/Switching+application+in+Google+Drive" ' +
@@ -1126,13 +1132,13 @@ App.prototype.init = function()
 							}
 						}));
 					}
-					
+
 					this.drive.addListener('userChanged', mxUtils.bind(this, function()
 					{
 						this.updateUserElement();
 						this.restoreLibraries();
 						this.checkLicense();
-						
+
 						if (this.drive.user != null && (!isLocalStorage || mxSettings.settings == null ||
 							mxSettings.settings.closeRealtimeWarning == null) &&
 							(!this.editor.chromeless || this.editor.editable))
@@ -1143,7 +1149,7 @@ App.prototype.init = function()
 								footer.style.cssText = 'position:absolute;bottom:0px;max-width:90%;padding:10px;padding-right:26px;' +
 									'white-space:nowrap;left:50%;bottom:2px;';
 								footer.className = 'geStatusAlert';
-								
+
 								mxUtils.setPrefixedStyle(footer.style, 'transform', 'translate(-50%,110%)');
 								mxUtils.setPrefixedStyle(footer.style, 'transition', 'all 1s ease');
 								footer.style.whiteSpace = 'nowrap';
@@ -1152,18 +1158,18 @@ App.prototype.init = function()
 									'<img src="' + this.editor.graph.warningImage.src + '" border="0" style="margin-top:-4px;margin-right:2px;" valign="middle"/>&nbsp;' +
 									'You need to take action to convert legacy files. Click here.&nbsp;' +
 									'<img src="' + this.editor.graph.warningImage.src + '" border="0" style="margin-top:-4px;margin-left:2px;" valign="middle"/></a>';
-								
+
 								var img = document.createElement('img');
-								
+
 								img.setAttribute('src', Dialog.prototype.closeImage);
 								img.setAttribute('title', mxResources.get('close'));
 								img.style.position = 'absolute';
 								img.style.cursor = 'pointer';
 								img.style.right = '10px';
 								img.style.top = '12px';
-	
+
 								footer.appendChild(img);
-	
+
 								mxEvent.addListener(img, 'click', mxUtils.bind(this, function()
 								{
 									footer.parentNode.removeChild(footer);
@@ -1176,9 +1182,9 @@ App.prototype.init = function()
 										mxSettings.save();
 									}
 								}));
-								
+
 								document.body.appendChild(footer);
-								
+
 								window.setTimeout(mxUtils.bind(this, function()
 								{
 									mxUtils.setPrefixedStyle(footer.style, 'transform', 'translate(-50%,0%)');
@@ -1186,11 +1192,11 @@ App.prototype.init = function()
 							}));
 						}
 					}))
-					
+
 					// Notifies listeners of new client
 					this.fireEvent(new mxEventObject('clientLoaded', 'client', this.drive));
 				});
-				
+
 				if (window.DrawGapiClientCallback != null)
 				{
 					gapi.load(((urlParams['picker'] != '0') ? 'picker,': '') + 'auth:' + App.GOOGLE_APIS, mxUtils.bind(this, function(resp)
@@ -1211,7 +1217,7 @@ App.prototype.init = function()
 							}));
 						}
 					}));
-					
+
 					/**
 					 * Clears any callbacks.
 					 */
@@ -1227,7 +1233,7 @@ App.prototype.init = function()
 				window.DrawGapiClientCallback = initDriveClient;
 			}
 		});
-		
+
 		initDriveClient();
 	}
 
@@ -1244,18 +1250,18 @@ App.prototype.init = function()
 				 * Clears dropbox client callback.
 				 */
 				window.DrawDropboxClientCallback = null;
-				
+
 				/**
 				 * Holds the x-coordinate of the point.
 				 */
 				this.dropbox = new DropboxClient(this);
-				
+
 				this.dropbox.addListener('userChanged', mxUtils.bind(this, function()
 				{
 					this.updateUserElement();
 					this.restoreLibraries();
 				}));
-				
+
 				// Notifies listeners of new client
 				this.fireEvent(new mxEventObject('clientLoaded', 'client', this.dropbox));
 			}
@@ -1290,26 +1296,26 @@ App.prototype.init = function()
 		{
 			this.mode = App.mode;
 		}
-		
+
 		if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp && urlParams['embed'] != '1' &&
 			urlParams['stealth'] != '1' && urlParams['offline'] != '1' &&
 			(!this.editor.chromeless || this.editor.editable))
 		{
 			// Checks if the cache is alive
 			var acceptResponse = true;
-			
+
 			var timeoutThread = window.setTimeout(mxUtils.bind(this, function()
 			{
 				acceptResponse = false;
 				EditorUi.logEvent({category: 'TIMEOUT-CACHE-CHECK', action: 'timeout', label: 408});
 			}), this.timeout);
-			
+
 			var t0 = new Date().getTime();
-			
+
 			mxUtils.get(EditorUi.cacheUrl + '?alive', mxUtils.bind(this, function(req)
 			{
 				window.clearTimeout(timeoutThread);
-				
+
 				if (acceptResponse)
 				{
 					EditorUi.logEvent({category: 'ALIVE-CACHE-CHECK', action: 'alive', label:
@@ -1332,7 +1338,7 @@ App.prototype.init = function()
 		this.buttonContainer.style.paddingRight = '48px';
 		this.buttonContainer.style.position = 'absolute';
 		this.buttonContainer.style.right = '0px';
-		
+
 		this.menubar.container.appendChild(this.buttonContainer);
 	}
 
@@ -1343,23 +1349,23 @@ App.prototype.init = function()
 			this.toggleElement.click();
 			this.toggleElement.style.display = 'none';
 		}
-		
+
 		this.icon = document.createElement('img');
 		this.icon.setAttribute('src', IMAGE_PATH + '/logo-flat-small.png');
 		this.icon.setAttribute('title', mxResources.get('draw.io'));
 		this.icon.style.padding = '6px';
 		this.icon.style.cursor = 'pointer';
-		
+
 		mxEvent.addListener(this.icon, 'click', mxUtils.bind(this, function(evt)
 		{
 			this.appIconClicked(evt);
 		}));
-		
+
 		if (mxClient.IS_QUIRKS)
 		{
 			this.icon.style.marginTop = '12px';
 		}
-		
+
 		this.menubar.container.insertBefore(this.icon, this.menubar.container.firstChild);
 	}
 };
@@ -1398,25 +1404,25 @@ App.prototype.getPusher = function()
 			encrypted: true
 		});
 	}
-	
+
 	return this.pusher;
 };
 
 /**
- * 
+ *
  */
 App.prototype.checkLicense = function()
 {
 	var driveUser = this.drive.getUser();
 	var email = ((urlParams['dev'] == '1') ? urlParams['lic'] : null) ||
 		((driveUser != null) ? driveUser.email : null);
-	
+
 	if (!this.isOffline() && !this.editor.chromeless && email != null)
 	{
 		// Anonymises the local part of the email address
 		var at = email.lastIndexOf('@');
 		var domain = email;
-		
+
 		if (at >= 0)
 		{
 			domain = email.substring(at + 1);
@@ -1424,8 +1430,8 @@ App.prototype.checkLicense = function()
 		}
 
 		// Timestamp is workaround for cached response in certain environments
-		mxUtils.post('/license', 'domain=' + encodeURIComponent(domain) + '&email=' + encodeURIComponent(email) + 
-				'&ds=' + encodeURIComponent(driveUser.displayName) + '&lc=' + encodeURIComponent(driveUser.locale) + 
+		mxUtils.post('/license', 'domain=' + encodeURIComponent(domain) + '&email=' + encodeURIComponent(email) +
+				'&ds=' + encodeURIComponent(driveUser.displayName) + '&lc=' + encodeURIComponent(driveUser.locale) +
 				'&ts=' + new Date().getTime(),
 			mxUtils.bind(this, function(req)
 			{
@@ -1434,11 +1440,11 @@ App.prototype.checkLicense = function()
 					if (req.getStatus() >= 200 && req.getStatus() <= 299)
 					{
 						var value = req.getText();
-						
+
 						if (value.length > 0)
 						{
 							var lic = JSON.parse(value);
-							
+
 							if (lic != null)
 							{
 								this.handleLicense(lic, domain);
@@ -1466,12 +1472,12 @@ App.prototype.handleLicense = function(lic, domain)
 };
 
 /**
- * 
+ *
  */
 App.prototype.getEditBlankXml = function()
 {
 	var file = this.getCurrentFile();
-	
+
 	if (file != null && this.editor.isChromelessView() && this.editor.graph.isLightboxView())
 	{
 		return file.getData();
@@ -1518,7 +1524,7 @@ App.prototype.getDraft = function()
 //		try
 //		{
 //			var draft = localStorage.getItem('.draft');
-//			
+//
 //			if (draft != null)
 //			{
 //				return JSON.parse(draft);
@@ -1541,7 +1547,7 @@ App.prototype.addRecent = function(entry)
 	if (isLocalStorage && localStorage != null)
 	{
 		var recent = this.getRecent();
-		
+
 		if (recent == null)
 		{
 			recent = [];
@@ -1556,7 +1562,7 @@ App.prototype.addRecent = function(entry)
 				}
 			}
 		}
-		
+
 		if (recent != null)
 		{
 			recent.unshift(entry);
@@ -1576,7 +1582,7 @@ App.prototype.getRecent = function()
 		try
 		{
 			var recent = localStorage.getItem('.recent');
-			
+
 			if (recent != null)
 			{
 				return JSON.parse(recent);
@@ -1586,7 +1592,7 @@ App.prototype.getRecent = function()
 		{
 			// ignore
 		}
-		
+
 		return null;
 	}
 };
@@ -1639,7 +1645,7 @@ App.prototype.onBeforeUnload = function()
 	else
 	{
 		var file = this.getCurrentFile();
-		
+
 		if (file != null)
 		{
 			// KNOWN: Message is ignored by most browsers
@@ -1663,7 +1669,7 @@ App.prototype.onBeforeUnload = function()
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -1673,18 +1679,18 @@ App.prototype.updateDocumentTitle = function()
 	{
 		var title = this.editor.appName;
 		var file = this.getCurrentFile();
-		
+
 		if (this.isOfflineApp())
 		{
 			title += ' app';
 		}
-		
+
 		if (file != null)
 		{
 			var filename = (file.getTitle() != null) ? file.getTitle() : this.defaultFilename;
 			title = filename + ' - ' + title;
 		}
-		
+
 		document.title = title;
 	}
 };
@@ -1700,15 +1706,15 @@ App.prototype.createCrcTable = function()
 	for (var n = 0; n < 256; n++)
 	{
         c = n;
-        
+
         for (var k = 0; k < 8; k++)
         {
             c = ((c&1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
         }
-	        
+
         crcTable[n] = c;
     }
-	
+
     return crcTable;
 };
 
@@ -1718,16 +1724,16 @@ App.prototype.createCrcTable = function()
 App.prototype.getThumbnail = function(width, success)
 {
 	var result = false;
-	
+
 	try
 	{
 		if (this.thumbImageCache == null)
 		{
 			this.thumbImageCache = new Object();
 		}
-		
+
 		var graph = this.editor.graph;
-		
+
 		// Exports PNG for first page while other page is visible by creating a graph
 		// LATER: Add caching for the graph or SVG while not on first page
 		if (this.pages != null && this.currentPage != this.pages[0])
@@ -1735,7 +1741,7 @@ App.prototype.getThumbnail = function(width, success)
 			graph = this.createTemporaryGraph(graph.getStylesheet());
 			var graphGetGlobalVariable = graph.getGlobalVariable;
 			var page = this.pages[0];
-	
+
 			graph.getGlobalVariable = function(name)
 			{
 				if (name == 'page')
@@ -1746,14 +1752,14 @@ App.prototype.getThumbnail = function(width, success)
 				{
 					return 1;
 				}
-				
+
 				return graphGetGlobalVariable.apply(this, arguments);
 			};
-	
+
 			document.body.appendChild(graph.container);
 			graph.model.setRoot(page.root);
 		}
-		
+
 		// Uses client-side canvas export
 		if (mxClient.IS_CHROMEAPP || (!graph.mathEnabled && this.useCanvasForExport))
 		{
@@ -1771,14 +1777,14 @@ App.prototype.getThumbnail = function(width, success)
 				{
 					canvas = null;
 				}
-				
+
 		   		success(canvas);
 		   	}), width, this.thumbImageCache, '#ffffff', function()
 		   	{
 		   		// Continues with null in error case
 		   		success();
 		   	}, null, null, null, null, null, null, graph);
-		   	
+
 		   	result = true;
 		}
 		else if (this.canvasSupported && this.getCurrentFile() != null)
@@ -1786,38 +1792,38 @@ App.prototype.getThumbnail = function(width, success)
 			var canvas = document.createElement('canvas');
 			var bounds = graph.getGraphBounds();
 			var scale = width / bounds.width;
-			
+
 			// Limits scale to 1 or 2 * width / height
 			scale = Math.min(1, Math.min((width * 3) / (bounds.height * 4), scale));
-			
+
 			var x0 = Math.floor(bounds.x);
 			var y0 = Math.floor(bounds.y);
-			
+
 			canvas.setAttribute('width', Math.ceil(scale * (bounds.width + 4)));
 			canvas.setAttribute('height', Math.ceil(scale * (bounds.height + 4)));
-			
+
 			var ctx = canvas.getContext('2d');
-			
+
 			// Configures the canvas
 			ctx.scale(scale, scale);
 			ctx.translate(-x0, -y0);
-			
+
 			// Paint white background instead of transparent
 			var bg = graph.background;
-			
+
 			if (bg == null || bg == '' || bg == mxConstants.NONE)
 			{
 				bg = '#ffffff';
 			}
-	
+
 			// Paints background
 			ctx.save();
 			ctx.fillStyle = bg;
 			ctx.fillRect(x0, y0, Math.ceil(bounds.width + 4), Math.ceil(bounds.height + 4));
 			ctx.restore();
-			
+
 			var htmlCanvas = new mxJsCanvas(canvas);
-			
+
 			// NOTE: htmlCanvas passed into async canvas is only used for image
 			// and canvas caching (canvas caching not used in this case as we do
 			// not render text). To reuse that cache via the thumbImageCache we
@@ -1826,10 +1832,10 @@ App.prototype.getThumbnail = function(width, success)
 			// LATER: Is clear thumbImageCache needed if file changes?
 			var asynCanvas = new mxAsyncCanvas(this.thumbImageCache);
 			htmlCanvas.images = this.thumbImageCache.images;
-			
+
 			// Render graph
 			var imgExport = new mxImageExport();
-			
+
 			imgExport.drawShape = function(state, canvas)
 			{
 				if (state.shape instanceof mxShape && state.shape.checkBounds())
@@ -1841,20 +1847,20 @@ App.prototype.getThumbnail = function(width, success)
 					canvas.restore();
 				}
 			};
-			
+
 			imgExport.drawText = function(state, canvas)
 			{
 				// No text output for thumbnails
 			};
-	
+
 			imgExport.drawState(graph.getView().getState(graph.model.root), asynCanvas);
-	
+
 			asynCanvas.finish(mxUtils.bind(this, function()
 			{
 				try
 				{
 					imgExport.drawState(graph.getView().getState(graph.model.root), htmlCanvas);
-					
+
 			   		// Removes temporary graph from DOM
 	   	   	    	if (graph != this.editor.graph && graph.container.parentNode != null)
 					{
@@ -1868,7 +1874,7 @@ App.prototype.getThumbnail = function(width, success)
 
 				success(canvas);
 			}));
-			
+
 			result = true;
 		}
 	}
@@ -1881,13 +1887,13 @@ App.prototype.getThumbnail = function(width, success)
 			graph.container.parentNode.removeChild(graph.container);
 		}
 	}
-	
+
 	return result;
 };
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -1900,9 +1906,9 @@ App.prototype.createBackground = function()
 	bg.style.top = '0px';
 	bg.style.bottom = '0px';
 	bg.style.right = '0px';
-	
+
 	mxUtils.setOpacity(bg, 100);
-	
+
 	if (mxClient.IS_QUIRKS)
 	{
 		new mxDivResizer(bg);
@@ -1913,18 +1919,18 @@ App.prototype.createBackground = function()
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 (function()
 {
 	var editorUiSetMode = EditorUi.prototype.setMode;
-	
+
 	App.prototype.setMode = function(mode, remember)
 	{
 		editorUiSetMode.apply(this, arguments);
-		
+
 		// Note: UseLocalStorage affects the file dialogs
 		// and should not be modified if mode is undefined
 		if (this.mode != null)
@@ -1936,7 +1942,7 @@ App.prototype.createBackground = function()
 		{
 			var file = this.getCurrentFile();
 			mode = (file != null) ? file.getMode() : mode;
-			
+
 			if (mode == App.MODE_GOOGLE)
 			{
 				this.appIcon.setAttribute('title', mxResources.get('openIt', [mxResources.get('googleDrive')]));
@@ -1958,7 +1964,7 @@ App.prototype.createBackground = function()
 				this.appIcon.style.cursor = 'default';
 			}
 		}
-		
+
 		if (remember)
 		{
 			try
@@ -1984,7 +1990,7 @@ App.prototype.createBackground = function()
 
 /**
  * Function: authorize
- * 
+ *
  * Authorizes the client, gets the userId and calls <open>.
  */
 App.prototype.appIconClicked = function(evt)
@@ -1997,7 +2003,7 @@ App.prototype.appIconClicked = function(evt)
 	{
 		var file = this.getCurrentFile();
 		var mode = (file != null) ? file.getMode() : null;
-		
+
 		if (mode == App.MODE_GOOGLE)
 		{
 			if (file != null && file.desc != null && file.desc.parents != null &&
@@ -2039,13 +2045,13 @@ App.prototype.appIconClicked = function(evt)
 			}
 		}
 	}
-	
+
 	mxEvent.consume(evt);
 };
 
 /**
  * Function: authorize
- * 
+ *
  * Authorizes the client, gets the userId and calls <open>.
  */
 App.prototype.clearMode = function()
@@ -2064,31 +2070,31 @@ App.prototype.clearMode = function()
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.getDiagramId = function()
 {
 	var id = window.location.hash;
-	
+
 	// Strips the hash sign
 	if (id != null && id.length > 0)
 	{
 		id = id.substring(1);
 	}
-	
+
 	// Workaround for Trello client appending data after hash
 	if (id != null && id.length > 1 && id.charAt(0) == 'T')
 	{
 		var idx = id.indexOf('#');
-		
+
 		if (idx > 0)
 		{
 			id = id.substring(0, idx);
 		}
 	}
-	
+
 	return id;
 };
 
@@ -2108,12 +2114,12 @@ App.prototype.open = function()
 		if (window.opener != null)
 		{
 			var value = urlParams['create'];
-			
+
 			if (value != null)
 			{
 				value = decodeURIComponent(value);
 			}
-			
+
 			if (value != null && value.length > 0 && value.substring(0, 7) != 'http://' &&
 				value.substring(0, 8) != 'https://')
 			{
@@ -2125,12 +2131,12 @@ App.prototype.open = function()
 				window.opener.openFile.setConsumer(mxUtils.bind(this, function(xml, filename, temp)
 				{
 					this.spinner.stop();
-					
+
 					if (filename == null)
 					{
 						var title = urlParams['title'];
 						temp = true;
-						
+
 						if (title != null)
 						{
 							filename = decodeURIComponent(title);
@@ -2140,15 +2146,15 @@ App.prototype.open = function()
 							filename = this.defaultFilename;
 						}
 					}
-					
+
 					// Replaces PNG with XML extension
 					var dot = (!this.useCanvasForExport) ? filename.substring(filename.length - 4) == '.png' : -1;
-					
+
 					if (dot > 0)
 					{
 						filename = filename.substring(0, filename.length - 4) + '.drawio';
 					}
-					
+
 					this.fileLoaded((mxClient.IS_IOS) ?
 						new StorageFile(this, xml, filename) :
 						new LocalFile(this, xml, filename, temp));
@@ -2187,7 +2193,7 @@ App.prototype.loadGapi = function(then)
 							this.drive = null;
 							this.mode = null;
 						}
-						
+
 						then();
 					}));
 				}));
@@ -2198,7 +2204,7 @@ App.prototype.loadGapi = function(then)
 
 /**
  * Main function. Program starts here.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -2217,9 +2223,9 @@ App.prototype.load = function()
 			{
 				// ignores invalid state args
 			}
-			
+
 			this.editor.graph.setEnabled(this.getCurrentFile() != null);
-			
+
 			// Passes the userId from the state parameter to the client
 			if ((window.location.hash == null || window.location.hash.length == 0) &&
 				this.drive != null && this.stateArg != null && this.stateArg.userId != null)
@@ -2242,7 +2248,7 @@ App.prototype.load = function()
 					{
 						this.mode = null;
 					}
-					
+
 					this.start();
 				}
 				else
@@ -2266,7 +2272,7 @@ App.prototype.load = function()
 	else
 	{
 		this.restoreLibraries();
-		
+
 		if (urlParams['gapi'] == '1')
 		{
 			this.loadGapi(function() {});
@@ -2288,17 +2294,17 @@ App.prototype.showRefreshDialog = function(title, message)
 			mxResources.get('refresh'), mxUtils.bind(this, function()
 		{
 			var file = this.getCurrentFile();
-			
+
 			if (file != null)
 			{
 				file.setModified(false);
 			}
-				
+
 			this.spinner.spin(document.body, mxResources.get('connecting'));
 			this.editor.graph.setEnabled(false);
 			window.location.reload();
 		}), null, null, null, null, null, 340, 180);
-		
+
 		// Adds important notice to dialog
 		if (this.dialog != null && this.dialog.container != null)
 		{
@@ -2325,14 +2331,14 @@ App.prototype.showAlert = function(message)
 	{
 		var div = document.createElement('div');
 		div.className = 'geAlert';
-		div.style.zIndex = 2e9; 
+		div.style.zIndex = 2e9;
 		div.style.left = '50%';
 		div.style.top = '-100%';
 		mxUtils.setPrefixedStyle(div.style, 'transform', 'translate(-50%,0%)');
 		mxUtils.setPrefixedStyle(div.style, 'transition', 'all 1s ease');
-		
+
 		div.innerHTML = message;
-		
+
 		var close = document.createElement('a');
 		close.className = 'geAlertLink';
 		close.style.textAlign = 'right';
@@ -2341,7 +2347,7 @@ App.prototype.showAlert = function(message)
 		close.setAttribute('title', mxResources.get('close'));
 		close.innerHTML = mxResources.get('close');
 		div.appendChild(close);
-		
+
 		mxEvent.addListener(close, 'click', function(evt)
 		{
 			if (div.parentNode != null)
@@ -2350,21 +2356,21 @@ App.prototype.showAlert = function(message)
 				mxEvent.consume(evt);
 			}
 		});
-		
+
 		document.body.appendChild(div);
-		
+
 		// Delayed to get smoother animation after DOM rendering
 		window.setTimeout(function()
 		{
 			div.style.top = '30px';
 		}, 10);
-		
+
 		// Fades out the alert after 15 secs
 		window.setTimeout(function()
 		{
 			mxUtils.setPrefixedStyle(div.style, 'transition', 'all 2s ease');
 			div.style.opacity = '0';
-			
+
 			window.setTimeout(function()
 			{
 				if (div.parentNode != null)
@@ -2378,7 +2384,7 @@ App.prototype.showAlert = function(message)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -2387,7 +2393,7 @@ App.prototype.start = function()
 	this.bg.parentNode.removeChild(this.bg);
 	this.restoreLibraries();
 	this.spinner.stop();
-	
+
 	try
 	{
 		// Listens to changes of the hash if not in embed or client mode
@@ -2421,7 +2427,7 @@ App.prototype.start = function()
 				}
 			}));
 		}
-		
+
 		// Redirects old url URL parameter to new #U format
 		if ((window.location.hash == null || window.location.hash.length <= 1) && urlParams['url'] != null)
 		{
@@ -2442,9 +2448,9 @@ App.prototype.start = function()
 						{
 							xml = this.extractGraphModelFromPng(xml);
 						}
-						
+
 						var title = urlParams['title'];
-						
+
 						if (title != null)
 						{
 							title = decodeURIComponent(title);
@@ -2453,9 +2459,9 @@ App.prototype.start = function()
 						{
 							title = this.defaultFilename;
 						}
-						
+
 						var file = new LocalFile(this, xml, title, true);
-						
+
 						if (window.location.hash != null && window.location.hash.substring(0, 2) == '#P')
 						{
 							file.getHash = function()
@@ -2463,17 +2469,17 @@ App.prototype.start = function()
 								return window.location.hash.substring(1);
 							};
 						}
-						
+
 						this.fileLoaded(file);
 						this.getCurrentFile().setModified(!this.editor.chromeless);
 					});
 
 					var parent = window.opener || window.parent;
-					
+
 					if (parent != window)
 					{
 						var value = urlParams['create'];
-						
+
 						if (value != null)
 						{
 							doLoadFile(parent[decodeURIComponent(value)]);
@@ -2481,7 +2487,7 @@ App.prototype.start = function()
 						else
 						{
 							value = urlParams['data'];
-							
+
 							if (value != null)
 							{
 								doLoadFile(decodeURIComponent(value));
@@ -2512,7 +2518,7 @@ App.prototype.start = function()
 					else
 					{
 						var waiting = false;
-						
+
 						// Checks if we're waiting for some asynchronous file to be loaded
 						// Cross-domain window access is not allowed in FF, so if we
 						// were opened from another domain then this will fail.
@@ -2524,7 +2530,7 @@ App.prototype.start = function()
 						{
 							// ignore
 						}
-						
+
 						if (waiting)
 						{
 							// Spinner is stopped in App.open
@@ -2533,7 +2539,7 @@ App.prototype.start = function()
 						else
 						{
 							var id = this.getDiagramId();
-							
+
 							if (urlParams['splash'] == '0' && (id == null || id.length == 0))
 							{
 								if (!mxClient.IS_CHROMEAPP)
@@ -2543,12 +2549,12 @@ App.prototype.start = function()
 									var prev = Editor.useLocalStorage;
 									this.createFile(this.defaultFilename, fileData, null, null, null, null, null, true);
 									Editor.useLocalStorage = prev;
-									
+
 									// Draft was used so the user should save the file
 									if (draft != null)
 									{
 										var file = this.getCurrentFile();
-										
+
 										if (file != null)
 										{
 											file.addUnsavedStatus();
@@ -2564,9 +2570,9 @@ App.prototype.start = function()
 					}
 				}
 			});
-	
+
 			var value = decodeURIComponent(urlParams['create'] || '');
-			
+
 			if ((window.location.hash == null || window.location.hash.length <= 1) &&
 				value != null && value.length > 0 && this.spinner.spin(document.body, mxResources.get('loading')))
 			{
@@ -2578,20 +2584,20 @@ App.prototype.start = function()
 						window.location.search = this.getSearch(['create', 'title']);
 					};
 				});
-	
+
 				var showCreateDialog = mxUtils.bind(this, function(xml)
 				{
 					this.spinner.stop();
-	
+
 					// Resets mode for dialog - local file is only for preview
 					if (urlParams['splash'] != '0')
 					{
 						this.fileLoaded(new LocalFile(this, xml, null));
-						
+
 						this.editor.graph.setEnabled(false);
 						this.mode = urlParams['mode'];
 						var title = urlParams['title'];
-		
+
 						if (title != null)
 						{
 							title = decodeURIComponent(title);
@@ -2600,10 +2606,10 @@ App.prototype.start = function()
 						{
 							title = this.defaultFilename;
 						}
-						
+
 						var serviceCount = this.getServiceCount(true);
 						var rowLimit = (serviceCount <= 4) ? 4 : 3;
-						
+
 						var dlg = new CreateDialog(this, title, mxUtils.bind(this, function(filename, mode)
 						{
 							if (mode == null)
@@ -2635,9 +2641,9 @@ App.prototype.start = function()
 						dlg.init();
 					}
 				});
-				
+
 				value = decodeURIComponent(value);
-				
+
 				if (value.substring(0, 7) != 'http://' && value.substring(0, 8) != 'https://')
 				{
 					// Cross-domain window access is not allowed in FF, so if we
@@ -2681,7 +2687,7 @@ App.prototype.start = function()
 						window.location.hash = 'G' + this.stateArg.ids[0];
 					}
 				}
-		
+
 				if ((window.location.hash == null || window.location.hash.length <= 1) &&
 					this.drive != null && this.stateArg != null && this.stateArg.action == 'create')
 				{
@@ -2703,18 +2709,18 @@ App.prototype.start = function()
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.showSplash = function(force)
 {
 	var serviceCount = this.getServiceCount(true, true);
-	
+
 	var showSecondDialog = mxUtils.bind(this, function()
 	{
 		var dlg = new SplashDialog(this);
-		
+
 		this.showDialog(dlg.container, 340, (serviceCount < 2 ||
 			mxClient.IS_CHROMEAPP || EditorUi.isElectronApp) ? 200 : 260, true, true,
 			mxUtils.bind(this, function(cancel)
@@ -2729,7 +2735,7 @@ App.prototype.showSplash = function(force)
 				}
 			}), true);
 	});
-	
+
 	if (this.editor.isChromelessView())
 	{
 		this.handleError({message: mxResources.get('noFileSelected')},
@@ -2741,13 +2747,13 @@ App.prototype.showSplash = function(force)
 	else if (!mxClient.IS_CHROMEAPP && (this.mode == null || force))
 	{
 		var rowLimit = (serviceCount == 4) ? 2 : 3;
-		
+
 		var dlg = new StorageDialog(this, mxUtils.bind(this, function()
 		{
 			this.hideDialog();
 			showSecondDialog();
 		}), rowLimit);
-		
+
 		this.showDialog(dlg.container, (rowLimit < 3) ? 260 : 300,
 			(serviceCount >= 4) ? 420 : 300, true, false);
 		dlg.init();
@@ -2760,18 +2766,18 @@ App.prototype.showSplash = function(force)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.addLanguageMenu = function(elt, addLabel)
 {
 	var img = null;
-	
+
 	if (!this.isOfflineApp() || mxClient.IS_CHROMEAPP)
 	{
 		var langMenu = this.menus.get('language');
-		
+
 		if (langMenu != null)
 		{
 			img = document.createElement('div');
@@ -2781,7 +2787,7 @@ App.prototype.addLanguageMenu = function(elt, addLabel)
 			img.style.cursor = 'pointer';
 			img.style.bottom = '20px';
 			img.style.right = '20px';
-			
+
 			if (addLabel)
 			{
 				img.style.direction = 'rtl';
@@ -2796,7 +2802,7 @@ App.prototype.addLanguageMenu = function(elt, addLabel)
 				mxUtils.write(label, mxResources.get('language'));
 				img.appendChild(label);
 			}
-			
+
 			mxEvent.addListener(img, 'click', mxUtils.bind(this, function(evt)
 			{
 				this.editor.graph.popupMenuHandler.hideMenu();
@@ -2805,31 +2811,31 @@ App.prototype.addLanguageMenu = function(elt, addLabel)
 				menu.smartSeparators = true;
 				menu.showDisabled = true;
 				menu.autoExpand = true;
-				
+
 				// Disables autoexpand and destroys menu when hidden
 				menu.hideMenu = mxUtils.bind(this, function()
 				{
 					mxPopupMenu.prototype.hideMenu.apply(menu, arguments);
 					menu.destroy();
 				});
-		
+
 				var offset = mxUtils.getOffset(img);
 				menu.popup(offset.x, offset.y + img.offsetHeight, null, evt);
-				
+
 				// Allows hiding by clicking on document
 				this.setCurrentMenu(menu);
 			}));
-		
+
 			elt.appendChild(img);
 		}
 	}
-	
+
 	return img;
 };
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -2838,7 +2844,7 @@ App.prototype.pickFile = function(mode)
 	try
 	{
 		mode = (mode != null) ? mode : this.mode;
-		
+
 		if (mode == App.MODE_GOOGLE)
 		{
 			if (this.drive != null && typeof(google) != 'undefined' && typeof(google.picker) != 'undefined')
@@ -2853,7 +2859,7 @@ App.prototype.pickFile = function(mode)
 		else
 		{
 			var peer = this.getPeerForMode(mode);
-			
+
 			if (peer != null)
 			{
 				peer.pickFile();
@@ -2864,7 +2870,7 @@ App.prototype.pickFile = function(mode)
 			{
 				var input = document.createElement('input');
 				input.setAttribute('type', 'file');
-				
+
 				mxEvent.addListener(input, 'change', mxUtils.bind(this, function()
 				{
 					if (input.files != null)
@@ -2872,7 +2878,7 @@ App.prototype.pickFile = function(mode)
 						this.openFiles(input.files);
 					}
 				}));
-		
+
 				input.click();
 			}
 			else
@@ -2884,32 +2890,32 @@ App.prototype.pickFile = function(mode)
 				var prevValue = Editor.useLocalStorage;
 				Editor.useLocalStorage = (mode == App.MODE_BROWSER);
 				this.openFile();
-				
+
 				// Installs local handler for opened files in same window
 				window.openFile.setConsumer(mxUtils.bind(this, function(xml, filename)
 				{
 					// Replaces PNG with XML extension
 					var dot = !this.useCanvasForExport && filename.substring(filename.length - 4) == '.png';
-					
+
 					if (dot)
 					{
 						filename = filename.substring(0, filename.length - 4) + '.drawio';
 					}
-					
+
 					this.fileLoaded((mode == App.MODE_BROWSER) ?
 						new StorageFile(this, xml, filename) :
 						new LocalFile(this, xml, filename));
 				}));
-				
+
 				// Extends dialog close to show splash screen
 				var dlg = this.dialog;
 				var dlgClose = dlg.close;
-				
+
 				this.dialog.close = mxUtils.bind(this, function(cancel)
 				{
 					Editor.useLocalStorage = prevValue;
 					dlgClose.apply(dlg, arguments);
-		
+
 					if (this.getCurrentFile() == null)
 					{
 						this.showSplash();
@@ -2926,14 +2932,14 @@ App.prototype.pickFile = function(mode)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.pickLibrary = function(mode)
 {
 	mode = (mode != null) ? mode : this.mode;
-	
+
 	if (mode == App.MODE_GOOGLE || mode == App.MODE_DROPBOX || mode == App.MODE_ONEDRIVE || mode == App.MODE_GITHUB || mode == App.MODE_TRELLO)
 	{
 		var peer = (mode == App.MODE_GOOGLE) ? this.drive :
@@ -2941,7 +2947,7 @@ App.prototype.pickLibrary = function(mode)
 			((mode == App.MODE_GITHUB) ? this.gitHub :
 			((mode == App.MODE_TRELLO) ? this.trello :
 			this.dropbox)));
-		
+
 		if (peer != null)
 		{
 			peer.pickLibrary(mxUtils.bind(this, function(id, optionalFile)
@@ -2964,7 +2970,7 @@ App.prototype.pickLibrary = function(mode)
 						peer.getLibrary(id, mxUtils.bind(this, function(file)
 						{
 							this.spinner.stop();
-							
+
 							try
 							{
 								this.loadLibrary(file);
@@ -2986,7 +2992,7 @@ App.prototype.pickLibrary = function(mode)
 	{
 		var input = document.createElement('input');
 		input.setAttribute('type', 'file');
-		
+
 		mxEvent.addListener(input, 'change', mxUtils.bind(this, function()
 		{
 			if (input.files != null)
@@ -2996,7 +3002,7 @@ App.prototype.pickLibrary = function(mode)
 					(mxUtils.bind(this, function(file)
 					{
 						var reader = new FileReader();
-					
+
 						reader.onload = mxUtils.bind(this, function(e)
 						{
 							try
@@ -3021,16 +3027,16 @@ App.prototype.pickLibrary = function(mode)
 	{
 		window.openNew = false;
 		window.openKey = 'open';
-		
+
 		var prevValue = Editor.useLocalStorage;
 		Editor.useLocalStorage = mode == App.MODE_BROWSER;
-		
+
 		// Closes dialog after open
 		window.openFile = new OpenFile(mxUtils.bind(this, function(cancel)
 		{
 			this.hideDialog(cancel);
 		}));
-		
+
 		window.openFile.setConsumer(mxUtils.bind(this, function(xml, filename)
 		{
 			try
@@ -3056,7 +3062,7 @@ App.prototype.pickLibrary = function(mode)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -3068,25 +3074,25 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
 		noSpin = (noSpin != null) ? noSpin : false;
 		noReload = (noReload != null) ? noReload : false;
 		var xml = this.createLibraryDataFromImages(images);
-		
+
 		var error = mxUtils.bind(this, function(resp)
 		{
 			this.spinner.stop();
-			
+
 			if (fn != null)
 			{
 				fn();
 			}
-			
+
 			this.handleError(resp, (resp != null) ? mxResources.get('errorSavingFile') : null);
 		});
-	
+
 		// Handles special case for local libraries
 		if (file == null && mode == App.MODE_DEVICE)
 		{
 			file = new LocalLibrary(this, xml, name);
 		}
-		
+
 		if (file == null)
 		{
 			this.pickFolder(mode, mxUtils.bind(this, function(folderId)
@@ -3141,7 +3147,7 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
 					var fn = mxUtils.bind(this, function()
 					{
 						var file = new StorageLibrary(this, xml, name);
-						
+
 						// Inserts data into local storage
 						file.saveFile(name, false, mxUtils.bind(this, function()
 						{
@@ -3149,7 +3155,7 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
 							this.libraryLoaded(file, images);
 						}), error);
 					});
-					
+
 					if (localStorage.getItem(name) == null)
 					{
 						fn();
@@ -3168,30 +3174,30 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
 		else if (noSpin || this.spinner.spin(document.body, mxResources.get('saving')))
 		{
 			file.setData(xml);
-			
+
 			var doSave = mxUtils.bind(this, function()
 			{
 				file.save(true, mxUtils.bind(this, function(resp)
 				{
 					this.spinner.stop();
 					this.hideDialog(true);
-					
+
 					if (!noReload)
 					{
 						this.libraryLoaded(file, images);
 					}
-					
+
 					if (fn != null)
 					{
 						fn();
 					}
 				}), error);
 			});
-			
+
 			if (name != file.getTitle())
 			{
 				var oldHash = file.getHash();
-				
+
 				file.rename(name, mxUtils.bind(this, function(resp)
 				{
 					// Change hash in stored settings
@@ -3200,12 +3206,12 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
 						mxSettings.removeCustomLibrary(oldHash);
 						mxSettings.addCustomLibrary(file.getHash());
 					}
-	
+
 					// Workaround for library files changing hash so
 					// the old library cannot be removed from the
 					// sidebar using the updated file in libraryLoaded
 					this.removeLibrarySidebar(oldHash);
-	
+
 					doSave();
 				}), error)
 			}
@@ -3227,14 +3233,14 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
 App.prototype.saveFile = function(forceDialog, success)
 {
 	var file = this.getCurrentFile();
-	
+
 	if (file != null)
 	{
 		// FIXME: Invoke for local files
 		var done = mxUtils.bind(this, function()
 		{
 			this.removeDraft();
-			
+
 			if (this.getCurrentFile() != file && !file.isModified())
 			{
 				// Workaround for possible status update while save as dialog is showing
@@ -3248,13 +3254,13 @@ App.prototype.saveFile = function(forceDialog, success)
 					this.editor.setStatus('');
 				}
 			}
-			
+
 			if (success != null)
 			{
 				success();
 			}
 		});
-		
+
 		if (!forceDialog && file.getTitle() != null && this.mode != null)
 		{
 			this.save(file.getTitle(), done);
@@ -3265,14 +3271,14 @@ App.prototype.saveFile = function(forceDialog, success)
 			var allowTab = !mxClient.IS_IOS || !navigator.standalone;
 			var prev = this.mode;
 			var serviceCount = this.getServiceCount(true);
-			
+
 			if (isLocalStorage)
 			{
 				serviceCount++;
 			}
-			
+
 			var rowLimit = (serviceCount <= 4) ? 2 : (serviceCount > 6 ? 4 : 3);
-			
+
 			var dlg = new CreateDialog(this, filename, mxUtils.bind(this, function(name, mode)
 			{
 				if (name != null && name.length > 0)
@@ -3293,7 +3299,7 @@ App.prototype.saveFile = function(forceDialog, success)
 						{
 							window.openFile = null;
 						});
-						
+
 						// Do not use a filename to use undefined mode
 						window.openFile.setData(this.getFileData(true));
 						this.openLink(this.getUrl(window.location.pathname), null, true);
@@ -3320,7 +3326,7 @@ App.prototype.saveFile = function(forceDialog, success)
 				(this.isOffline()) ? null :
 				'https://desk.draw.io/support/solutions/articles/16000042485',
 				true, rowLimit, null, null, null, this.editor.fileExtensions);
-			
+
 			this.showDialog(dlg.container, 460, (serviceCount > rowLimit) ? 390 : 270, true, true);
 			dlg.init();
 		}
@@ -3329,7 +3335,7 @@ App.prototype.saveFile = function(forceDialog, success)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -3337,7 +3343,7 @@ App.prototype.loadTemplate = function(url, onload, onerror, templateFilename)
 {
 	var base64 = false;
 	var realUrl = url;
-	
+
 	if (!this.editor.isCorsEnabledForUrl(realUrl))
 	{
 		// Always uses base64 response to check magic numbers for file type
@@ -3347,14 +3353,14 @@ App.prototype.loadTemplate = function(url, onload, onerror, templateFilename)
 	}
 
 	var filterFn = (templateFilename != null) ? templateFilename : url;
-	
+
 	this.loadUrl(realUrl, mxUtils.bind(this, function(responseData)
 	{
 		try
 		{
 			var data = (!base64) ? responseData : ((window.atob && !mxClient.IS_IE && !mxClient.IS_IE11) ?
 				atob(responseData) : Base64.decode(responseData));
-			
+
 			if (/(\.v(dx|sdx?))($|\?)/i.test(filterFn) || this.isVisioData(data))
 			{
 				this.importVisio(this.base64ToBlob(responseData.substring(responseData.indexOf(',') + 1)), function(xml)
@@ -3390,7 +3396,7 @@ App.prototype.loadTemplate = function(url, onload, onerror, templateFilename)
 				{
 					data = this.extractGraphModelFromPng(responseData);
 				}
-				
+
 				onload(data);
 			}
 		}
@@ -3403,7 +3409,7 @@ App.prototype.loadTemplate = function(url, onload, onerror, templateFilename)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -3428,7 +3434,7 @@ App.prototype.getPeerForMode = function(mode)
 	else if (mode == App.MODE_TRELLO)
 	{
 		return this.trello;
-	} 
+	}
 	else
 	{
 		return null;
@@ -3437,7 +3443,7 @@ App.prototype.getPeerForMode = function(mode)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -3448,16 +3454,16 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 	if (title != null && this.spinner.spin(document.body, mxResources.get('inserting')))
 	{
 		data = (data != null) ? data : this.emptyDiagramXml;
-		
+
 		var complete = mxUtils.bind(this, function()
 		{
 			this.spinner.stop();
 		});
-		
+
 		var error = mxUtils.bind(this, function(resp)
 		{
 			complete();
-			
+
 			if (resp == null && this.getCurrentFile() == null && this.dialog == null)
 			{
 				this.showSplash();
@@ -3467,7 +3473,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 				this.handleError(resp);
 			}
 		});
-		
+
 		try
 		{
 			if (mode == App.MODE_GOOGLE && this.drive != null)
@@ -3476,7 +3482,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 				{
 					folderId = this.stateArg.folderId;
 				}
-	
+
 				this.drive.insertFile(title, data, folderId, mxUtils.bind(this, function(file)
 				{
 					complete();
@@ -3518,18 +3524,18 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 			else if (mode == App.MODE_BROWSER)
 			{
 				complete();
-				
+
 				var fn = mxUtils.bind(this, function()
 				{
 					var file = new StorageFile(this, data, title);
-					
+
 					// Inserts data into local storage
 					file.saveFile(title, false, mxUtils.bind(this, function()
 					{
 						this.fileCreated(file, libs, replace, done);
 					}), error);
 				});
-				
+
 				if (localStorage.getItem(title) == null)
 				{
 					fn();
@@ -3554,26 +3560,26 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 		catch (e)
 		{
 			complete();
-			this.handleError(e);	
+			this.handleError(e);
 		}
 	}
 };
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.fileCreated = function(file, libs, replace, done)
 {
 	var url = window.location.pathname;
-	
+
 	if (libs != null && libs.length > 0)
 	{
 		url += '?libs=' + libs;
 	}
-	
+
 	url = this.getUrl(url);
 
 	// Always opens a new tab for local files to avoid losing changes
@@ -3581,7 +3587,7 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 	{
 		url += '#' + file.getHash();
 	}
-	
+
 	// Makes sure to produce consistent output with finalized files via createFileData this needs
 	// to save the file again since it needs the newly created file ID for redirecting in HTML
 	if (this.spinner.spin(document.body, mxResources.get('inserting')))
@@ -3592,7 +3598,7 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 		var redirect = window.location.protocol + '//' + window.location.hostname + url;
 		var node = dataNode;
 		var graph = null;
-		
+
 		// Handles special case where SVG files need a rendered graph to be saved
 		if (dataNode != null && /\.svg$/i.test(file.getTitle()))
 		{
@@ -3600,7 +3606,7 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 			document.body.appendChild(graph.container);
 			node = this.decodeNodeIntoGraph(node, graph);
 		}
-		
+
 		file.setData(this.createFileData(dataNode, graph, file, redirect));
 
 		if (graph != null)
@@ -3612,28 +3618,28 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 		{
 			this.spinner.stop();
 		});
-		
+
 		var fn = mxUtils.bind(this, function()
 		{
 			complete();
-			
+
 			var currentFile = this.getCurrentFile();
-			
+
 			if (replace == null && currentFile != null)
 			{
 				replace = !currentFile.isModified() && currentFile.getMode() == null;
 			}
-			
+
 			var fn3 = mxUtils.bind(this, function()
 			{
 				window.openFile = null;
 				this.fileLoaded(file);
-				
+
 				if (replace)
 				{
 					file.addAllSavedStatus();
 				}
-				
+
 				if (libs != null)
 				{
 					this.sidebar.showEntries(libs);
@@ -3657,7 +3663,7 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 			{
 				done();
 			}
-			
+
 			// Opens the file in a new window
 			if (replace != null && !replace)
 			{
@@ -3668,7 +3674,7 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 					{
 						window.openFile = null;
 					});
-						
+
 					window.openFile.setData(file.getData(), file.getTitle(), file.getMode() == null);
 				}
 
@@ -3676,7 +3682,7 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 				{
 					done();
 				}
-				
+
 				window.openWindow(url, null, fn2);
 			}
 			else
@@ -3684,7 +3690,7 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 				fn2();
 			}
 		});
-		
+
 		// Updates data in memory for local files
 		if (file.constructor == LocalFile)
 		{
@@ -3706,14 +3712,14 @@ App.prototype.fileCreated = function(file, libs, replace, done)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.loadFile = function(id, sameWindow, file, success, force)
 {
 	this.hideDialog();
-	
+
 	var fn2 = mxUtils.bind(this, function()
 	{
 		if (id == null || id.length == 0)
@@ -3742,7 +3748,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 					{
 						id = decodeURIComponent(id.substring(1));
 						var data = localStorage.getItem(id);
-						
+
 						if (data != null)
 						{
 							this.fileLoaded(new StorageFile(this, data, id));
@@ -3781,7 +3787,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 			else if (id.charAt(0) == 'S')
 			{
 				this.spinner.stop();
-				
+
 				try
 				{
 					this.loadDescriptor(JSON.parse(Graph.decompress(id.substring(1))),
@@ -3800,12 +3806,12 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 				// Raw file encoded into URL
 				this.spinner.stop();
 				var data = decodeURIComponent(id.substring(1));
-				
+
 				if (data.charAt(0) != '<')
 				{
 					data = Graph.decompress(data);
 				}
-				
+
 				var tempFile = new LocalFile(this, data, (urlParams['title'] != null) ?
 					decodeURIComponent(urlParams['title']) : this.defaultFilename, true);
 				tempFile.getHash = function()
@@ -3822,7 +3828,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 			else if (id.charAt(0) == 'U')
 			{
 				var url = decodeURIComponent(id.substring(1));
-				
+
 				var doFallback = mxUtils.bind(this, function()
 				{
 					// Fallback for non-public Google Drive files
@@ -3830,35 +3836,35 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 						(this.drive != null || typeof window.DriveClient === 'function'))
 					{
 						this.hideDialog();
-						
+
 						var fallback = mxUtils.bind(this, function()
 						{
 							this.spinner.stop();
-							
+
 							if (this.drive != null)
 							{
 								var tempId = url.substring(31, url.lastIndexOf('&ex'));
-								
+
 								this.loadFile('G' + tempId, sameWindow, null, mxUtils.bind(this, function()
 								{
 									var currentFile = this.getCurrentFile();
-									
+
 									if (currentFile != null && this.editor.chromeless && !this.editor.editable)
 									{
 										currentFile.getHash = function()
 										{
 											return 'G' + tempId;
 										};
-										
+
 										window.location.hash = '#' + currentFile.getHash();
 									}
-									
+
 									if (success != null)
 									{
 										success();
 									}
 								}));
-								
+
 								return true;
 							}
 							else
@@ -3866,12 +3872,12 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 								return false;
 							}
 						});
-						
+
 						if (!fallback() && this.spinner.spin(document.body, mxResources.get('loading')))
 						{
 							this.addListener('clientLoaded', fallback);
 						}
-						
+
 						return true;
 					}
 					else
@@ -3879,27 +3885,27 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 						return false;
 					}
 				});
-				
+
 				this.loadTemplate(url, mxUtils.bind(this, function(text)
 				{
 					this.spinner.stop();
-					
+
 					if (text != null && text.length > 0)
 					{
 						var filename = this.defaultFilename;
-						
+
 						// Tries to find name from URL with valid extensions
 						if (urlParams['title'] == null && urlParams['notitle'] != '1')
 						{
 							var tmp = url;
 							var dot = url.lastIndexOf('.');
 							var slash = tmp.lastIndexOf('/');
-							
+
 							if (dot > slash && slash > 0)
 							{
 								tmp = tmp.substring(slash + 1, dot);
 								var ext = url.substring(dot);
-								
+
 								if (!this.useCanvasForExport && ext == '.png')
 								{
 									ext = '.drawio';
@@ -3913,14 +3919,14 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 								}
 							}
 						}
-						
+
 						var tempFile = new LocalFile(this, text, (urlParams['title'] != null) ?
 							decodeURIComponent(urlParams['title']) : filename, true);
 						tempFile.getHash = function()
 						{
 							return id;
 						};
-						
+
 						if (!this.fileLoaded(tempFile, true) && !doFallback())
 						{
 							this.handleError({message: mxResources.get('fileNotFound')},
@@ -3947,7 +3953,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 			{
 				// Google Drive files are handled as default file types
 				var peer = null;
-				
+
 				if (id.charAt(0) == 'G')
 				{
 					peer = this.drive;
@@ -3968,7 +3974,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 				{
 					peer = this.trello;
 				}
-				
+
 				if (peer == null)
 				{
 					this.handleError({message: mxResources.get('serviceUnavailableOrBlocked')}, mxResources.get('errorLoadingFile'), mxUtils.bind(this, function()
@@ -3987,7 +3993,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 						this.spinner.stop();
 						this.fileLoaded(file);
 						var currentFile = this.getCurrentFile();
-						
+
 						// Keeps ID event for converted files in chromeless mode for refresh to work
 						if (currentFile == null)
 						{
@@ -4000,7 +4006,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 							{
 								return peerChar + id;
 							};
-							
+
 							window.location.hash = '#' + currentFile.getHash();
 						}
 						else
@@ -4019,11 +4025,11 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 						{
 							console.log('error in loadFile:', id, resp);
 						}
-						
+
 						this.handleError(resp, (resp != null) ? mxResources.get('errorLoadingFile') : null, mxUtils.bind(this, function()
 						{
 							var currentFile = this.getCurrentFile();
-							
+
 							if (currentFile == null)
 							{
 								window.location.hash = '';
@@ -4031,7 +4037,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 							}
 							else
 							{
-								window.location.hash = '#' + currentFile.getHash();	
+								window.location.hash = '#' + currentFile.getHash();
 							}
 						}));
 					}));
@@ -4039,9 +4045,9 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 			}
 		}
 	});
-	
+
 	var currentFile = this.getCurrentFile();
-	
+
 	var fn = mxUtils.bind(this, function()
 	{
 		if (force || currentFile == null || !currentFile.isModified())
@@ -4059,7 +4065,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 			}), fn2, mxResources.get('cancel'), mxResources.get('discardChanges'));
 		}
 	});
-	
+
 	if (id == null || id.length == 0)
 	{
 		fn();
@@ -4076,19 +4082,19 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.getLibraryStorageHint = function(file)
 {
 	var tip = file.getTitle();
-	
+
 	if (file.constructor != LocalLibrary)
 	{
 		tip += '\n' + file.getHash();
 	}
-	
+
 	if (file.constructor == DriveLibrary)
 	{
 		tip += ' (' + mxResources.get('googleDrive') + ')';
@@ -4132,7 +4138,7 @@ App.prototype.restoreLibraries = function()
 		{
 			this.pendingLibraries = new Object();
 		}
-		
+
 		// Ignores this library next time
 		var ignore = mxUtils.bind(this, function(id, keep)
 		{
@@ -4140,10 +4146,10 @@ App.prototype.restoreLibraries = function()
 			{
 				mxSettings.removeCustomLibrary(id);
 			}
-			
+
 			delete this.pendingLibraries[id];
 		});
-				
+
 		var load = mxUtils.bind(this, function(libs, done)
 		{
 			var waiting = 0;
@@ -4164,20 +4170,20 @@ App.prototype.restoreLibraries = function()
 							}
 						}
 					}
-					
+
 					if (done != null)
 					{
 						done();
 					}
 				}
 			});
-			
+
 			if (libs != null)
 			{
 				for (var i = 0; i < libs.length; i++)
 				{
 					var name = encodeURIComponent(decodeURIComponent(libs[i]));
-					
+
 					(mxUtils.bind(this, function(id, index)
 					{
 						if (id != null && id.length > 0 && this.pendingLibraries[id] == null &&
@@ -4185,7 +4191,7 @@ App.prototype.restoreLibraries = function()
 						{
 							// Waits for all libraries to load
 							waiting++;
-							
+
 							var onload = mxUtils.bind(this, function(file)
 							{
 								delete this.pendingLibraries[id];
@@ -4193,17 +4199,17 @@ App.prototype.restoreLibraries = function()
 								waiting--;
 								checkDone();
 							});
-							
+
 							var onerror = mxUtils.bind(this, function(keep)
 							{
 								ignore(id, keep);
 								waiting--;
 								checkDone();
 							});
-							
+
 							this.pendingLibraries[id] = true;
 							var service = id.substring(0, 1);
-							
+
 							if (service == 'L')
 							{
 								if (isLocalStorage || mxClient.IS_CHROMEAPP)
@@ -4214,14 +4220,14 @@ App.prototype.restoreLibraries = function()
 										try
 										{
 											var name = decodeURIComponent(id.substring(1));
-											
+
 											var xml = this.getLocalData(name, mxUtils.bind(this, function(xml)
 											{
 												if (name == '.scratchpad' && xml == null)
 												{
 													xml = this.emptyLibraryXml;
 												}
-												
+
 												if (xml != null)
 												{
 													onload(new StorageLibrary(this, xml, name));
@@ -4242,17 +4248,17 @@ App.prototype.restoreLibraries = function()
 							else if (service == 'U')
 							{
 								var url = decodeURIComponent(id.substring(1));
-								
+
 								if (!this.isOffline())
 								{
 									var realUrl = url;
-									
+
 									if (!this.editor.isCorsEnabledForUrl(realUrl))
 									{
 										var nocache = 't=' + new Date().getTime();
 										realUrl = PROXY_URL + '?url=' + encodeURIComponent(url) + '&' + nocache;
 									}
-									
+
 									try
 									{
 										// Uses proxy to avoid CORS issues
@@ -4287,18 +4293,18 @@ App.prototype.restoreLibraries = function()
 							else if (service == 'R')
 							{
 								var libDesc = decodeURIComponent(id.substring(1));
-								
+
 								if (!this.isOffline())
 								{
 									try
 									{
 										libDesc = JSON.parse(libDesc);
 										var libObj = {
-											id: libDesc[0], 
-					               			title: libDesc[1], 
+											id: libDesc[0],
+					               			title: libDesc[1],
 					               			downloadUrl: libDesc[2]
 										}
-										
+
 										this.remoteInvoke('getFileContent', [libObj.downloadUrl], null, mxUtils.bind(this, function(libContent)
 										{
 											try
@@ -4323,7 +4329,7 @@ App.prototype.restoreLibraries = function()
 							else
 							{
 								var peer = null;
-								
+
 								if (service == 'G')
 								{
 									if (this.drive != null && this.drive.user != null)
@@ -4359,7 +4365,7 @@ App.prototype.restoreLibraries = function()
 										peer = this.oneDrive;
 									}
 								}
-								
+
 								if (peer != null)
 								{
 									peer.getLibrary(decodeURIComponent(id.substring(1)), mxUtils.bind(this, function(file)
@@ -4385,7 +4391,7 @@ App.prototype.restoreLibraries = function()
 						}
 					}))(name, i);
 				}
-				
+
 				checkDone();
 			}
 			else
@@ -4393,7 +4399,7 @@ App.prototype.restoreLibraries = function()
 				checkDone();
 			}
 		});
-		
+
 		load(mxSettings.getCustomLibraries(), function()
 		{
 			load((urlParams['clibs'] || '').split(';'));
@@ -4403,7 +4409,7 @@ App.prototype.restoreLibraries = function()
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -4412,7 +4418,7 @@ App.prototype.updateButtonContainer = function()
 	if (this.buttonContainer != null)
 	{
 		var file = this.getCurrentFile();
-		
+
 		// Comments
 		if (this.commentsSupported())
 		{
@@ -4425,20 +4431,20 @@ App.prototype.updateButtonContainer = function()
 					'margin-right:4px;float:left;cursor:pointer;width:24px;height:24px;background-size:24px 24px;' +
 					'background-position:center center;background-repeat:no-repeat;background-image:' +
 					'url(' + Editor.commentImage + ');';
-				
+
 				if (uiTheme == 'atlas')
 				{
 					this.commentButton.style.marginRight = '10px';
 					this.commentButton.style.marginTop = '-3px';
 				}
-				
+
 				mxEvent.addListener(this.commentButton, 'click', mxUtils.bind(this, function()
 				{
 					this.actions.get('comments').funct();
 				}));
-				
+
 				this.buttonContainer.appendChild(this.commentButton);
-				
+
 				if (uiTheme == 'dark' || uiTheme == 'atlas')
 				{
 					this.commentButton.style.filter = 'invert(100%)';
@@ -4450,7 +4456,7 @@ App.prototype.updateButtonContainer = function()
 			this.commentButton.parentNode.removeChild(this.commentButton);
 			this.commentButton = null;
 		}
-		
+
 		// Share
 		if (file != null && file.constructor == DriveFile)
 		{
@@ -4466,21 +4472,21 @@ App.prototype.updateButtonContainer = function()
 				this.shareButton.style.minWidth = '0px';
 				this.shareButton.style.cssFloat = 'right';
 				this.shareButton.setAttribute('title', mxResources.get('share'));
-				
+
 				var icon = document.createElement('img');
 				icon.setAttribute('src', this.shareImage);
 				icon.setAttribute('align', 'absmiddle');
 				icon.style.marginRight = '4px';
 				icon.style.marginTop = '-3px';
 				this.shareButton.appendChild(icon);
-				
+
 				mxUtils.write(this.shareButton, mxResources.get('share'));
-				
+
 				mxEvent.addListener(this.shareButton, 'click', mxUtils.bind(this, function()
 				{
 					this.actions.get('share').funct();
 				}));
-				
+
 				this.buttonContainer.appendChild(this.shareButton);
 			}
 		}
@@ -4494,7 +4500,7 @@ App.prototype.updateButtonContainer = function()
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
@@ -4502,16 +4508,16 @@ App.prototype.save = function(name, done)
 {
 	var file = this.getCurrentFile();
 	var msg = mxResources.get('saving');
-	
+
 	if (file != null && this.spinner.spin(document.body, msg))
 	{
 		this.editor.setStatus('');
-		
+
 		if (this.editor.graph.isEditing())
 		{
 			this.editor.graph.stopEditing();
 		}
-		
+
 		var success = mxUtils.bind(this, function()
 		{
 			file.handleFileSuccess(true);
@@ -4521,12 +4527,12 @@ App.prototype.save = function(name, done)
 				done();
 			}
 		});
-		
+
 		var error = mxUtils.bind(this, function(err)
 		{
 			file.handleFileError(err, true);
 		});
-		
+
 		try
 		{
 			if (name == file.getTitle())
@@ -4554,23 +4560,23 @@ App.prototype.pickFolder = function(mode, fn, enabled, direct, force)
 {
 	enabled = (enabled != null) ? enabled : true;
 	var resume = this.spinner.pause();
-	
+
 	if (enabled && mode == App.MODE_GOOGLE && this.drive != null)
 	{
 		// Shows a save dialog
 		this.drive.pickFolder(mxUtils.bind(this, function(evt)
 		{
 			resume();
-			
+
 			if (evt.action == google.picker.Action.PICKED)
 			{
 				var folderId = null;
-				
+
 				if (evt.docs != null && evt.docs.length > 0 && evt.docs[0].type == 'folder')
 				{
 					folderId = evt.docs[0].id;
 				}
-				
+
 				fn(folderId);
 			}
 		}), force);
@@ -4581,7 +4587,7 @@ App.prototype.pickFolder = function(mode, fn, enabled, direct, force)
 		{
 			var folderId = null;
 			resume();
-			
+
 			if (files != null && files.value != null && files.value.length > 0)
 			{
 				folderId = OneDriveFile.prototype.getIdOf(files.value[0]);
@@ -4612,7 +4618,7 @@ App.prototype.pickFolder = function(mode, fn, enabled, direct, force)
 };
 
 /**
- * 
+ *
  */
 App.prototype.exportFile = function(data, filename, mimeType, base64Encoded, mode, folderId)
 {
@@ -4642,12 +4648,12 @@ App.prototype.exportFile = function(data, filename, mimeType, base64Encoded, mod
 				// "File exported. Click here to open folder."
 //				this.editor.setStatus('<div class="geStatusMessage" style="cursor:pointer;">' +
 //					mxResources.get('saved') + '</div>');
-//				
+//
 //				// Installs click handler for opening
 //				if (this.statusContainer != null)
 //				{
 //					var links = this.statusContainer.getElementsByTagName('div');
-//					
+//
 //					if (links.length > 0)
 //					{
 //						mxEvent.addListener(links[0], 'click', mxUtils.bind(this, function()
@@ -4659,7 +4665,7 @@ App.prototype.exportFile = function(data, filename, mimeType, base64Encoded, mod
 //						}));
 //					}
 //				}
-				
+
 				this.spinner.stop();
 			}), mxUtils.bind(this, function(resp)
 			{
@@ -4720,7 +4726,7 @@ App.prototype.exportFile = function(data, filename, mimeType, base64Encoded, mod
 		{
 			localStorage.setItem(filename, data);
 		});
-		
+
 		if (localStorage.getItem(filename) == null)
 		{
 			fn();
@@ -4734,14 +4740,14 @@ App.prototype.exportFile = function(data, filename, mimeType, base64Encoded, mod
 
 /**
  * Translates this point by the given vector.
- * 
+ *
  * @param {number} dx X-coordinate of the translation.
  * @param {number} dy Y-coordinate of the translation.
  */
 App.prototype.descriptorChanged = function()
 {
 	var file = this.getCurrentFile();
-	
+
 	if (file != null)
 	{
 		if (this.fname != null)
@@ -4752,23 +4758,23 @@ App.prototype.descriptorChanged = function()
 			mxUtils.write(this.fname, filename);
 			this.fname.setAttribute('title', filename + ' - ' + mxResources.get('rename'));
 		}
-		
+
 		var graph = this.editor.graph;
 		var editable = file.isEditable() && !file.invalidChecksum;
-		
+
 		if (graph.isEnabled() && !editable)
 		{
 			graph.reset();
 		}
-		
+
 		graph.setEnabled(editable);
-		
+
 		// Ignores title and hash for revisions
 		if (urlParams['rev'] == null)
 		{
 			this.updateDocumentTitle();
 			var newHash = file.getHash();
-			
+
 			if (newHash.length > 0)
 			{
 				window.location.hash = newHash;
@@ -4779,7 +4785,7 @@ App.prototype.descriptorChanged = function()
 			}
 		}
 	}
-	
+
 	this.updateUi();
 
 	if (this.format != null && this.editor.graph.isSelectionEmpty())
@@ -4794,7 +4800,7 @@ App.prototype.descriptorChanged = function()
 App.prototype.showAuthDialog = function(peer, showRememberOption, fn, closeFn)
 {
 	var resume = this.spinner.pause();
-	
+
 	this.showDialog(new AuthDialog(this, peer, showRememberOption, mxUtils.bind(this, function(remember)
 	{
 		try
@@ -4818,7 +4824,7 @@ App.prototype.showAuthDialog = function(peer, showRememberOption, fn, closeFn)
 		{
 			closeFn();
 		}
-		
+
 		if (cancel && this.getCurrentFile() == null && this.dialog == null)
 		{
 			this.showSplash();
@@ -4834,27 +4840,27 @@ App.prototype.showAuthDialog = function(peer, showRememberOption, fn, closeFn)
 App.prototype.convertFile = function(url, filename, mimeType, extension, success, error)
 {
 	var name = filename;
-	
+
 	// SVG file extensions are valid and needed for image import
 	if (!/\.svg$/i.test(name))
 	{
 		name = name.substring(0, filename.lastIndexOf('.')) + extension;
 	}
-	
+
 	var gitHubUrl = false;
-	
+
 	if (this.gitHub != null && url.substring(0, this.gitHub.baseUrl.length) == this.gitHub.baseUrl)
 	{
 		gitHubUrl = true;
 	}
-	
+
 	// Workaround for wrong binary response with VSD(X) & VDX files
 	if (/\.v(dx|sdx?)$/i.test(filename) && Graph.fileSupport && new XMLHttpRequest().upload &&
 		typeof new XMLHttpRequest().responseType === 'string')
 	{
 		var req = new XMLHttpRequest();
 		req.open('GET', url, true);
-		
+
 		if (!gitHubUrl)
 		{
 			req.responseType = 'blob';
@@ -4865,7 +4871,7 @@ App.prototype.convertFile = function(url, filename, mimeType, extension, success
 			if (req.status >= 200 && req.status <= 299)
 			{
 				var blob = null;
-				
+
 				if (gitHubUrl)
 				{
 					var file = JSON.parse(req.responseText);
@@ -4875,7 +4881,7 @@ App.prototype.convertFile = function(url, filename, mimeType, extension, success
 				{
 					blob = new Blob([req.response], {type: 'application/octet-stream'});
 				}
-				
+
 				this.importVisio(blob, mxUtils.bind(this, function(xml)
 				{
 					success(new LocalFile(this, xml, name, true));
@@ -4899,7 +4905,7 @@ App.prototype.convertFile = function(url, filename, mimeType, extension, success
 				if (/\.png$/i.test(filename))
 				{
 					temp = this.extractGraphModelFromPng(data);
-					
+
 					if (temp != null)
 					{
 						success(new LocalFile(this, temp, name, true));
@@ -4942,7 +4948,7 @@ App.prototype.convertFile = function(url, filename, mimeType, extension, success
 
 		var binary = /\.png$/i.test(filename) || /\.jpe?g$/i.test(filename) || (mimeType != null &&
 			mimeType.substring(0, 6) == 'image/');
-		
+
 		// NOTE: Cannot force non-binary request via loadUrl so needs separate
 		// code as decoding twice on content with binary data did not work
 		if (gitHubUrl)
@@ -4955,12 +4961,12 @@ App.prototype.convertFile = function(url, filename, mimeType, extension, success
 			    	{
 				    	var file = JSON.parse(req.getText());
 				    	var data = file.content;
-				    	
+
 				    	if (file.encoding === 'base64')
 				    	{
 				    		if (/\.png$/i.test(filename))
 					    	{
-					    		data = 'data:image/png;base64,' + data;	
+					    		data = 'data:image/png;base64,' + data;
 					    	}
 					    	else
 					    	{
@@ -4968,7 +4974,7 @@ App.prototype.convertFile = function(url, filename, mimeType, extension, success
 					    		data = (window.atob && !mxClient.IS_IE && !mxClient.IS_IE11) ? atob(data) : Base64.decode(data);
 					    	}
 				    	}
-				    	
+
 				    	handleData(data);
 			    	}
 				}
@@ -4999,7 +5005,7 @@ App.prototype.convertFile = function(url, filename, mimeType, extension, success
 
 /**
  * Adds the listener for automatically saving the diagram for local changes.
- */ 
+ */
 App.prototype.updateHeader = function()
 {
 	if (this.menubar != null)
@@ -5011,38 +5017,38 @@ App.prototype.updateHeader = function()
 		this.appIcon.style.height = (this.menubarHeight - 16) + 'px';
 		this.appIcon.style.margin = '8px 0px 8px 8px';
 		this.appIcon.style.borderRadius = '4px';
-		
+
 		if (uiTheme != 'dark')
 		{
 			this.appIcon.style.backgroundColor = '#f08705';
 		}
-		
+
 		mxEvent.disableContextMenu(this.appIcon);
-		
+
 		mxEvent.addListener(this.appIcon, 'click', mxUtils.bind(this, function(evt)
 		{
 			this.appIconClicked(evt);
 		}));
-		
+
 		// LATER: Use Alpha image loader in IE6
 		// NOTE: This uses the diagram bit of the old logo as it looks better in this case
 		//this.appIcon.style.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src=' + IMAGE_PATH + '/logo-white.png,sizingMethod=\'scale\')';
 		var logo = (!mxClient.IS_SVG) ? 'url(\'' + IMAGE_PATH + '/logo-white.png\')' :
 			'url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzA2LjE4NSAxMjAuMjk2IgogICB2aWV3Qm94PSIyNCAyNiA2OCA2OCIKICAgeT0iMHB4IgogICB4PSIwcHgiCiAgIHZlcnNpb249IjEuMSI+CiAgIAkgPGc+PGxpbmUKICAgICAgIHkyPSI3Mi4zOTQiCiAgICAgICB4Mj0iNDEuMDYxIgogICAgICAgeTE9IjQzLjM4NCIKICAgICAgIHgxPSI1OC4wNjkiCiAgICAgICBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiCiAgICAgICBzdHJva2Utd2lkdGg9IjMuNTUyOCIKICAgICAgIHN0cm9rZT0iI0ZGRkZGRiIKICAgICAgIGZpbGw9Im5vbmUiIC8+PGxpbmUKICAgICAgIHkyPSI3Mi4zOTQiCiAgICAgICB4Mj0iNzUuMDc2IgogICAgICAgeTE9IjQzLjM4NCIKICAgICAgIHgxPSI1OC4wNjgiCiAgICAgICBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiCiAgICAgICBzdHJva2Utd2lkdGg9IjMuNTAwOCIKICAgICAgIHN0cm9rZT0iI0ZGRkZGRiIKICAgICAgIGZpbGw9Im5vbmUiIC8+PGc+PHBhdGgKICAgICAgICAgZD0iTTUyLjc3Myw3Ny4wODRjMCwxLjk1NC0xLjU5OSwzLjU1My0zLjU1MywzLjU1M0gzNi45OTljLTEuOTU0LDAtMy41NTMtMS41OTktMy41NTMtMy41NTN2LTkuMzc5ICAgIGMwLTEuOTU0LDEuNTk5LTMuNTUzLDMuNTUzLTMuNTUzaDEyLjIyMmMxLjk1NCwwLDMuNTUzLDEuNTk5LDMuNTUzLDMuNTUzVjc3LjA4NHoiCiAgICAgICAgIGZpbGw9IiNGRkZGRkYiIC8+PC9nPjxnCiAgICAgICBpZD0iZzM0MTkiPjxwYXRoCiAgICAgICAgIGQ9Ik02Ny43NjIsNDguMDc0YzAsMS45NTQtMS41OTksMy41NTMtMy41NTMsMy41NTNINTEuOTg4Yy0xLjk1NCwwLTMuNTUzLTEuNTk5LTMuNTUzLTMuNTUzdi05LjM3OSAgICBjMC0xLjk1NCwxLjU5OS0zLjU1MywzLjU1My0zLjU1M0g2NC4yMWMxLjk1NCwwLDMuNTUzLDEuNTk5LDMuNTUzLDMuNTUzVjQ4LjA3NHoiCiAgICAgICAgIGZpbGw9IiNGRkZGRkYiIC8+PC9nPjxnPjxwYXRoCiAgICAgICAgIGQ9Ik04Mi43NTIsNzcuMDg0YzAsMS45NTQtMS41OTksMy41NTMtMy41NTMsMy41NTNINjYuOTc3Yy0xLjk1NCwwLTMuNTUzLTEuNTk5LTMuNTUzLTMuNTUzdi05LjM3OSAgICBjMC0xLjk1NCwxLjU5OS0zLjU1MywzLjU1My0zLjU1M2gxMi4yMjJjMS45NTQsMCwzLjU1MywxLjU5OSwzLjU1MywzLjU1M1Y3Ny4wODR6IgogICAgICAgICBmaWxsPSIjRkZGRkZGIiAvPjwvZz48L2c+PC9zdmc+)';
-		this.appIcon.style.backgroundImage = logo;		
+		this.appIcon.style.backgroundImage = logo;
 		this.appIcon.style.backgroundPosition = 'center center';
 		this.appIcon.style.backgroundRepeat = 'no-repeat';
-		
+
 		mxUtils.setPrefixedStyle(this.appIcon.style, 'transition', 'all 125ms linear');
-	
+
 		mxEvent.addListener(this.appIcon, 'mouseover', mxUtils.bind(this, function()
 		{
 			var file = this.getCurrentFile();
-			
+
 			if (file != null)
 			{
 				var mode = file.getMode();
-				
+
 				if (mode == App.MODE_GOOGLE)
 				{
 					this.appIcon.style.backgroundImage = 'url(' + IMAGE_PATH + '/google-drive-logo-white.svg)';
@@ -5065,17 +5071,17 @@ App.prototype.updateHeader = function()
 				}
 			}
 		}));
-		
+
 		mxEvent.addListener(this.appIcon, 'mouseout', mxUtils.bind(this, function()
 		{
 			this.appIcon.style.backgroundImage = logo;
 		}));
-		
+
 		if (urlParams['embed'] != '1')
 		{
 			this.menubarContainer.appendChild(this.appIcon);
 		}
-	
+
 		this.fnameWrapper = document.createElement('div');
 		this.fnameWrapper.style.position = 'absolute';
 		this.fnameWrapper.style.right = '120px';
@@ -5085,7 +5091,7 @@ App.prototype.updateHeader = function()
 		this.fnameWrapper.style.display = 'none';
 		this.fnameWrapper.style.overflow = 'hidden';
 		this.fnameWrapper.style.textOverflow = 'ellipsis';
-		
+
 		this.fname = document.createElement('a');
 		this.fname.setAttribute('title', mxResources.get('rename'));
 		this.fname.className = 'geItem';
@@ -5093,18 +5099,18 @@ App.prototype.updateHeader = function()
 		this.fname.style.display = 'inline';
 		this.fname.style.fontSize = '18px';
 		this.fname.style.whiteSpace = 'nowrap';
-		
+
 		// Prevents focus
         mxEvent.addListener(this.fname, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
         	mxUtils.bind(this, function(evt)
         {
 			evt.preventDefault();
 		}));
-		
+
 		mxEvent.addListener(this.fname, 'click', mxUtils.bind(this, function(evt)
 		{
 			var file = this.getCurrentFile();
-			
+
 			if (file != null && file.isRenamable())
 			{
 				if (this.editor.graph.isEditing())
@@ -5114,22 +5120,22 @@ App.prototype.updateHeader = function()
 
 				this.actions.get('rename').funct();
 			}
-			
+
 			mxEvent.consume(evt);
 		}));
-		
+
 		this.fnameWrapper.appendChild(this.fname);
-		
+
 		if (urlParams['embed'] != '1')
 		{
 			this.menubarContainer.appendChild(this.fnameWrapper);
-		
+
 			this.menubar.container.style.position = 'absolute';
 			this.menubar.container.style.paddingLeft = '52px';
 			this.menubar.container.style.boxSizing = 'border-box';
 			this.menubar.container.style.top = '29px';
 		}
-		
+
 		/**
 		 * Adds format panel toggle.
 		 */
@@ -5147,19 +5153,19 @@ App.prototype.updateHeader = function()
 		this.toggleFormatElement.style.backgroundPosition = '50% 50%';
 		this.toggleFormatElement.style.backgroundRepeat = 'no-repeat';
 		this.toolbarContainer.appendChild(this.toggleFormatElement);
-		
+
 		if (uiTheme == 'dark')
 		{
 			this.toggleFormatElement.style.filter = 'invert(100%)';
 		}
-		
+
 		// Prevents focus
 	    mxEvent.addListener(this.toggleFormatElement, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
         	mxUtils.bind(this, function(evt)
     	{
 			evt.preventDefault();
 		}));
-		
+
 		mxEvent.addListener(this.toggleFormatElement, 'click', mxUtils.bind(this, function(evt)
 		{
 			this.actions.get('formatPanel').funct();
@@ -5177,7 +5183,7 @@ App.prototype.updateHeader = function()
 				this.toggleFormatElement.style.backgroundImage = 'url(\'' + this.formatHideImage + '\')';
 			}
 		});
-		
+
 		this.addListener('formatWidthChanged', toggleFormatPanel);
 		toggleFormatPanel();
 
@@ -5196,21 +5202,21 @@ App.prototype.updateHeader = function()
 		this.fullscreenElement.style.backgroundRepeat = 'no-repeat';
 		this.fullscreenElement.style.backgroundImage = 'url(\'' + this.fullscreenImage + '\')';
 		this.toolbarContainer.appendChild(this.fullscreenElement);
-		
+
 		// Prevents focus
 		mxEvent.addListener(this.fullscreenElement, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
         	mxUtils.bind(this, function(evt)
     	{
 			evt.preventDefault();
 		}));
-		
+
 		// Some style changes in Atlas theme
 		if (uiTheme == 'atlas')
 		{
 			mxUtils.setOpacity(this.toggleFormatElement, 70);
 			mxUtils.setOpacity(this.fullscreenElement, 70);
 		}
-		
+
 		var initialPosition = this.hsplitPosition;
 		var collapsed = false;
 
@@ -5218,7 +5224,7 @@ App.prototype.updateHeader = function()
 		{
 			this.fullscreenElement.style.filter = 'invert(100%)';
 		}
-		
+
 		mxEvent.addListener(this.fullscreenElement, 'click', mxUtils.bind(this, function(evt)
 		{
 			if (uiTheme != 'atlas' && urlParams['embed'] != '1')
@@ -5252,34 +5258,34 @@ App.prototype.updateHeader = function()
 			this.toggleElement.style.fontSize = '14px';
 			this.toggleElement.style.textDecoration = 'none';
 			this.toggleElement.style.backgroundImage = 'url(\'' + this.chevronUpImage + '\')';
-				
+
 			this.toggleElement.style.backgroundPosition = '50% 50%';
 			this.toggleElement.style.backgroundRepeat = 'no-repeat';
-			
+
 			if (uiTheme == 'dark')
 			{
 				this.toggleElement.style.filter = 'invert(100%)';
 			}
-			
+
 			// Prevents focus
 			mxEvent.addListener(this.toggleElement, (mxClient.IS_POINTER) ? 'pointerdown' : 'mousedown',
 	        	mxUtils.bind(this, function(evt)
 	    	{
 				evt.preventDefault();
 			}));
-	
+
 			// Toggles compact mode
 			mxEvent.addListener(this.toggleElement, 'click', mxUtils.bind(this, function(evt)
 			{
 				this.toggleCompactMode();
 				mxEvent.consume(evt);
 			}));
-		
+
 			if (uiTheme != 'atlas')
 			{
 				this.toolbarContainer.appendChild(this.toggleElement);
 			}
-			
+
 			// Enable compact mode for small screens
 			if (screen.height <= 740 && typeof this.toggleElement.click !== 'undefined')
 			{
@@ -5363,7 +5369,7 @@ App.prototype.updateUserElement = function()
 			this.userElement.style.backgroundImage =  'url(' + IMAGE_PATH + '/expanded.gif)';
 			this.userElement.style.backgroundPosition = '100% 60%';
 			this.userElement.style.backgroundRepeat = 'no-repeat';
-			
+
 			this.menubarContainer.appendChild(this.userElement);
 
 			// Prevents focus
@@ -5372,7 +5378,7 @@ App.prototype.updateUserElement = function()
 	    	{
 				evt.preventDefault();
 			}));
-			
+
 			mxEvent.addListener(this.userElement, 'click', mxUtils.bind(this, function(evt)
 			{
 				if (this.userPanel == null)
@@ -5384,10 +5390,10 @@ App.prototype.updateUserElement = function()
 					div.style.right = '36px';
 					div.style.padding = '0px';
 					div.style.cursor = 'default';
-					
+
 					this.userPanel = div;
 				}
-				
+
 				if (this.userPanel.parentNode != null)
 				{
 					this.userPanel.parentNode.removeChild(this.userPanel);
@@ -5396,7 +5402,7 @@ App.prototype.updateUserElement = function()
 				{
 					var connected = false;
 					this.userPanel.innerHTML = '';
-					
+
 					var img = document.createElement('img');
 
 					img.setAttribute('src', Dialog.prototype.closeImage);
@@ -5404,7 +5410,7 @@ App.prototype.updateUserElement = function()
 					img.className = 'geDialogClose';
 					img.style.top = '8px';
 					img.style.right = '8px';
-					
+
 					mxEvent.addListener(img, 'click', mxUtils.bind(this, function()
 					{
 						if (this.userPanel.parentNode != null)
@@ -5412,13 +5418,13 @@ App.prototype.updateUserElement = function()
 							this.userPanel.parentNode.removeChild(this.userPanel);
 						}
 					}));
-					
+
 					this.userPanel.appendChild(img);
-										
+
 					if (this.drive != null)
 					{
 						var driveUser = this.drive.getUser();
-						
+
 						if (driveUser != null)
 						{
 							connected = true;
@@ -5449,20 +5455,20 @@ App.prototype.updateUserElement = function()
 									this.confirm(mxResources.get('areYouSure'), mxUtils.bind(this, function()
 									{
 										this.spinner.spin(document.body, mxResources.get('signOut'));
-										
+
 										this.diagramContainer.style.display = 'none';
 										this.formatContainer.style.display = 'none';
 										this.hsplit.style.display = 'none';
 										this.sidebarContainer.style.display = 'none';
 										this.sidebarFooterContainer.style.display = 'none';
-										
+
 										if (this.tabContainer != null)
 										{
 											this.tabContainer.style.display = 'none';
 										}
-											
+
 										file.close();
-	
+
 										// LATER: Use callback to wait for thumbnail update
 										window.setTimeout(mxUtils.bind(this, function()
 										{
@@ -5471,7 +5477,7 @@ App.prototype.updateUserElement = function()
 											window.location.hash = '';
 											this.drive.clearUserId();
 											gapi.auth.signOut();
-											
+
 											// Reload page to reset client auth
 											window.location.reload();
 										}), (file != null && file.constructor == DriveFile) ? 2000 : 0);
@@ -5484,11 +5490,11 @@ App.prototype.updateUserElement = function()
 									gapi.auth.signOut();
 								}
 							})));
-							
+
 							this.userPanel.appendChild(div);
 						}
 					}
-					
+
 					var addUser = mxUtils.bind(this, function(user, logo, logout, label)
 					{
 						if (user != null)
@@ -5497,7 +5503,7 @@ App.prototype.updateUserElement = function()
 							{
 								this.userPanel.appendChild(document.createElement('hr'));
 							}
-							
+
 							connected = true;
 							this.userPanel.innerHTML += '<table style="font-size:10pt;padding:20px 20px 10px 10px;"><tr><td valign="top">' +
 								((logo != null) ? '<img style="margin-right:10px;" src="' + logo + '" width="40" height="40"/></td>' : '') +
@@ -5509,16 +5515,16 @@ App.prototype.updateUserElement = function()
 							div.style.textAlign = 'center';
 							div.style.paddingBottom = '12px';
 							div.style.whiteSpace = 'nowrap';
-							
+
 							if (logout != null)
 							{
 								div.appendChild(mxUtils.button(mxResources.get('signOut'), logout));
 							}
-							
+
 							this.userPanel.appendChild(div);
 						}
 					});
-					
+
 					if (this.dropbox != null)
 					{
 						addUser(this.dropbox.getUser(), IMAGE_PATH + '/dropbox-logo.svg', mxUtils.bind(this, function()
@@ -5532,7 +5538,7 @@ App.prototype.updateUserElement = function()
 									this.dropbox.logout();
 									window.location.hash = '';
 								});
-								
+
 								if (!file.isModified())
 								{
 									doLogout();
@@ -5563,7 +5569,7 @@ App.prototype.updateUserElement = function()
 									this.oneDrive.logout();
 									window.location.hash = '';
 								});
-								
+
 								if (!file.isModified())
 								{
 									doLogout();
@@ -5594,7 +5600,7 @@ App.prototype.updateUserElement = function()
 									this.gitHub.logout();
 									window.location.hash = '';
 								});
-								
+
 								if (!file.isModified())
 								{
 									doLogout();
@@ -5611,7 +5617,7 @@ App.prototype.updateUserElement = function()
 							}
 						}), mxResources.get('github'));
 					}
-					
+
 					//TODO We have no user info from Trello, how we can create a user?
 					if (this.trello != null)
 					{
@@ -5626,7 +5632,7 @@ App.prototype.updateUserElement = function()
 									this.trello.logout();
 									window.location.hash = '';
 								});
-								
+
 								if (!file.isModified())
 								{
 									doLogout();
@@ -5643,24 +5649,24 @@ App.prototype.updateUserElement = function()
 							}
 						}), mxResources.get('trello'));
 					}
-					
+
 					if (!connected)
 					{
 						var div = document.createElement('div');
 						div.style.textAlign = 'center';
 						div.style.padding = '20px 20px 10px 10px';
 						div.innerHTML = mxResources.get('notConnected');
-						
+
 						this.userPanel.appendChild(div);
 					}
-					
+
 					var div = document.createElement('div');
 					div.style.textAlign = 'center';
 					div.style.padding = '12px';
 					div.style.background = 'whiteSmoke';
 					div.style.borderTop = '1px solid #e0e0e0';
 					div.style.whiteSpace = 'nowrap';
-					
+
 					var btn = mxUtils.button(mxResources.get('close'), mxUtils.bind(this, function()
 					{
 						if (!mxEvent.isConsumed(evt) && this.userPanel != null && this.userPanel.parentNode != null)
@@ -5673,10 +5679,10 @@ App.prototype.updateUserElement = function()
 
 					document.body.appendChild(this.userPanel);
 				}
-				
+
 				mxEvent.consume(evt);
 			}));
-			
+
 			mxEvent.addListener(document.body, 'click', mxUtils.bind(this, function(evt)
 			{
 				if (!mxEvent.isConsumed(evt) && this.userPanel != null && this.userPanel.parentNode != null)
@@ -5685,9 +5691,9 @@ App.prototype.updateUserElement = function()
 				}
 			}));
 		}
-		
+
 		var user = null;
-		
+
 		if (this.drive != null && this.drive.getUser() != null)
 		{
 			user = this.drive.getUser();
@@ -5705,11 +5711,11 @@ App.prototype.updateUserElement = function()
 			user = this.gitHub.getUser();
 		}
 		//TODO Trello no user issue
-		
+
 		if (user != null)
 		{
 			this.userElement.innerHTML = '';
-			
+
 			if (screen.width > 560)
 			{
 				mxUtils.write(this.userElement, user.displayName);
@@ -5727,7 +5733,7 @@ App.prototype.updateUserElement = function()
 App.prototype.getCurrentUser = function()
 {
 	var user = null;
-	
+
 	if (this.drive != null && this.drive.getUser() != null)
 	{
 		user = this.drive.getUser();
@@ -5745,17 +5751,17 @@ App.prototype.getCurrentUser = function()
 		user = this.gitHub.getUser();
 	}
 	//TODO Trello no user issue
-	
+
 	return user;
 }
 /**
  * Override depends on mxSettings which is not defined in the minified viewer.
  */
-var editorResetGraph = Editor.prototype.resetGraph;	
+var editorResetGraph = Editor.prototype.resetGraph;
 Editor.prototype.resetGraph = function()
 {
 	editorResetGraph.apply(this, arguments);
-	
+
 	// Overrides default with persisted value
 	this.graph.pageFormat = mxSettings.getPageFormat();
 };

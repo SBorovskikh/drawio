@@ -41,20 +41,20 @@ window.RESOURCE_BASE = window.RESOURCE_BASE || RESOURCES_PATH + '/dia';
 // save a GET request. This requires that all resources be present in
 // the special bundle.
 window.mxLoadResources = window.mxLoadResources || false;
-window.mxLanguage = window.mxLanguage || (function() 
+window.mxLanguage = window.mxLanguage || (function()
 {
 	var lang = (urlParams['offline'] == '1') ? 'en' : urlParams['lang'];
-	
+
 	// Known issue: No JSON object at this point in quirks in IE8
 	if (lang == null && typeof(JSON) != 'undefined')
 	{
 		// Cannot use mxSettings here
-		if (isLocalStorage) 
+		if (isLocalStorage)
 		{
 			try
 			{
 				var value = localStorage.getItem('.drawio-config');
-				
+
 				if (value != null)
 				{
 					lang = JSON.parse(value).language || null;
@@ -68,7 +68,7 @@ window.mxLanguage = window.mxLanguage || (function()
 			}
 		}
 	}
-	
+
 	return lang;
 })();
 
@@ -77,42 +77,8 @@ window.mxLanguage = window.mxLanguage || (function()
 window.mxLanguageMap = window.mxLanguageMap ||
 {
 	'i18n': '',
-	'id' : 'Bahasa Indonesia',
-	'ms' : 'Bahasa Melayu',
-	'bs' : 'Bosanski',
-	'bg' : 'Bulgarian',
-	'ca' : 'Català',
-	'cs' : 'Čeština',
-	'da' : 'Dansk',
-	'de' : 'Deutsch',
-	'et' : 'Eesti',
 	'en' : 'English',
-	'es' : 'Español',
-	'fil' : 'Filipino',
-	'fr' : 'Français',
-	'it' : 'Italiano',
-	'hu' : 'Magyar',
-	'nl' : 'Nederlands',
-	'no' : 'Norsk',
-	'pl' : 'Polski',
-	'pt-br' : 'Português (Brasil)',
-	'pt' : 'Português (Portugal)',
-	'ro' : 'Română',
-	'fi' : 'Suomi',
-	'sv' : 'Svenska',
-	'vi' : 'Tiếng Việt',
-	'tr' : 'Türkçe',
-	'el' : 'Ελληνικά',
-	'ru' : 'Русский',
-	'sr' : 'Српски',
-	'uk' : 'Українська',
-	'he' : 'עברית',
-	'ar' : 'العربية',
-	'th' : 'ไทย',
-	'ko' : '한국어',
-	'ja' : '日本語',
-	'zh' : '简体中文',
-	'zh-tw' : '繁體中文'
+	'ru' : 'Русский'
 };
 
 if (typeof window.mxBasePath === 'undefined')
@@ -123,7 +89,7 @@ if (typeof window.mxBasePath === 'undefined')
 if (window.mxLanguages == null)
 {
 	window.mxLanguages = [];
-	
+
 	// Populates the list of supported special language bundles
 	for (var lang in mxLanguageMap)
 	{
@@ -139,7 +105,7 @@ if (window.mxLanguages == null)
 /**
  * Returns the global UI setting before runngin static draw.io code
  */
-window.uiTheme = window.uiTheme || (function() 
+window.uiTheme = window.uiTheme || (function()
 {
 	var ui = urlParams['ui'];
 
@@ -147,12 +113,12 @@ window.uiTheme = window.uiTheme || (function()
 	if (ui == null && typeof JSON !== 'undefined')
 	{
 		// Cannot use mxSettings here
-		if (isLocalStorage) 
+		if (isLocalStorage)
 		{
 			try
 			{
 				var value = localStorage.getItem('.drawio-config');
-				
+
 				if (value != null)
 				{
 					ui = JSON.parse(value).ui || null;
@@ -166,7 +132,7 @@ window.uiTheme = window.uiTheme || (function()
 			}
 		}
 	}
-	
+
 	// Uses minimal theme on small screens
 	try
 	{
@@ -184,7 +150,7 @@ window.uiTheme = window.uiTheme || (function()
 	{
 		// ignore
 	}
-	
+
 	return ui;
 })();
 
@@ -202,24 +168,24 @@ function setCurrentXml(data, filename)
 /**
  * Overrides splash URL parameter via local storage
  */
-(function() 
+(function()
 {
 	// Known issue: No JSON object at this point in quirks in IE8
 	if (typeof JSON !== 'undefined')
 	{
 		// Cannot use mxSettings here
-		if (isLocalStorage) 
+		if (isLocalStorage)
 		{
 			try
 			{
 				var value = localStorage.getItem('.drawio-config');
 				var showSplash = true;
-				
+
 				if (value != null)
 				{
 					showSplash = JSON.parse(value).showStartScreen;
 				}
-				
+
 				// Undefined means true
 				if (showSplash == false)
 				{
@@ -232,7 +198,7 @@ function setCurrentXml(data, filename)
 			}
 		}
 	}
-	
+
 	// Customizes export URL
 	var ex = urlParams['export'];
 
@@ -242,7 +208,7 @@ function setCurrentXml(data, filename)
 		{
 			ex = 'http://' + ex;
 		}
-		
+
 		EXPORT_URL = ex;
 	}
 
@@ -251,13 +217,13 @@ function setCurrentXml(data, filename)
 
 	//Adds hard-coded logging domain for draw.io domains
 	var host = window.location.host;
-	
+
 	if (host != 'test.draw.io')
 	{
 		var searchString = 'draw.io';
 		var position = host.length - searchString.length;
 		var lastIndex = host.lastIndexOf(searchString, position);
-		
+
 		if (lastIndex !== -1 && lastIndex === position)
 		{
 			window.DRAWIO_LOG_URL = 'https://log.draw.io';
